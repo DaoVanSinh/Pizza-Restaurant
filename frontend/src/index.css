@@ -33,7 +33,14 @@ img{
   align-items:center;
   gap:10px;
 }
-
+.account-section a{
+  text-decoration: none;
+  color:black;
+}
+.account-section a:hover{
+  text-decoration: underline;
+  color:#025421;
+}
 .input{
   display:flex;
   justify-content:center;
@@ -121,7 +128,8 @@ img{
   border-radius:30px;
 }
 
-.product-card:hover{
+.product-card:hover,
+.Promotion-content:hover{
   background:#f3fbf6;
   transform:translateY(-5px);
   color:#038937;
@@ -151,7 +159,8 @@ img{
   align-items:center;
 }
 
-.price button{
+.price button,
+.promotion-price button{
   margin-left:20px;
   height:40px;
   width:100px;
@@ -162,7 +171,8 @@ img{
   transition:0.3s;
 }
 
-.price button:hover{
+.price button:hover,
+.promotion-price button:hover{
   background:#f42929;
   color:white;
 }
@@ -194,24 +204,26 @@ img{
 
 /* ================= PROMOTION ================= */
 
-.Promotion-container h2{
-  margin:3% 10% 1% 10%;
+.promotionList h2{
+  margin:3% 10% 3% 10%;
 }
 
 .Promotion-content{
   display:flex;
   align-items:center;
   gap:20px;
-  border:1px solid black;
+  /* border:1px solid black; */
   border-radius:15px;
   overflow:hidden;
   margin:1% 10% 4% 10%;
   padding:1%;
-  height:150px;
+  height:200px;
+  transition: transform 0.3s ease;
+
 }
 
 .Promotion-content img{
-  width:150px;
+  width:400px;
   height:100%;
   object-fit:cover;
 }
@@ -299,4 +311,88 @@ img{
     align-items:center;
   }
 
+}
+
+/* =======Login=========== */
+.login-container {
+  display: flex;
+  justify-content: center;
+  width: 420px;
+  /* height:400px; */
+  margin: 40px auto;
+  background: white;
+  padding: 35px 40px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  align-items: center;
+}
+
+.login-container h2 {
+  margin-bottom: 50px;
+  font-size: 26px;
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: lighter;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 400px;
+  padding: 12px;
+  margin-bottom: 18px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #0c713d;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-top:20px;
+  margin-bottom: 40px;
+}
+
+.checkbox-row input {
+  margin-right: 8px;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  background: #0c713d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-btn:hover {
+  background: #095a30;
+}
+
+.link-row {
+  font-size: 14px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.link-row a {
+  color: #0c713d;
+  text-decoration: none;
+}
+
+.link-row a:hover {
+  text-decoration: underline;
 }

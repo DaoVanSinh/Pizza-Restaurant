@@ -6,6 +6,7 @@ import baked from "../assets/baked.png";
 import appetizer from "../assets/appetizer.png";
 import salad from "../assets/salad.png";
 import drink from "../assets/drink.png";
+import promotionPage from "../assets/promotionPage.png";
 
 
 export const products = [

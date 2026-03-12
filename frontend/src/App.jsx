@@ -2,13 +2,15 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Drink from "./pages/Drink";
 import Layout from "./components/Layout";
-import Promotion from "./pages/Promotion/Promotion";
+import Promotion from "./pages/Promotion";
 import Pizza from "./pages/Pizza";
 import ChickenVibe from "./pages/ChickenVibe";
 import Baked from "./pages/Baked";
 import Pasta from "./pages/Pasta";
 import Appetizer from "./pages/Appetizer";
 import Salad from "./pages/Salad";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 
 function App() {
@@ -24,6 +26,8 @@ function App() {
           <Route path="/appetizer" element={<Appetizer />} />   
           <Route path="/salad" element={<Salad />} />        
           <Route path="/drink" element={<Drink />} />        
+          <Route path="/login" element={<Login />} />        
+          <Route path="/register" element={<Register />} />        
         </Route>
          {/* <Route index element={<Home />}/>
          <Route path="/drink" element={<Drink />} /> */}

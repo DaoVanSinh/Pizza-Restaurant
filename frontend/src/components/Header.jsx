@@ -20,7 +20,6 @@ export default function Header(){
 
     return(
         <>
-        
         <div className="header">
             <Link to="/">
                 <img className="logo-icon" src={LogoImg} alt="Logo" />
@@ -33,7 +32,9 @@ export default function Header(){
 
             <div className="account-section">
                 <img className="account-icon" src={AccountIcon} alt="Account" />
-                <h4>Đăng nhập / Đăng ký</h4>
+                {/* <h4>Đăng nhập / Đăng ký</h4> */}
+                <Link to="login">Đăng nhập</Link>/
+                <Link to="register">Đăng ký</Link>
             </div>
         </div>
 
