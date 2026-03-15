@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 export default function Login(){
-    const [login, setLogin] = useState()
+    // const [login, setLogin] = useState()
     return(
         <div className="login-container">
             <form>
@@ -13,7 +13,7 @@ export default function Login(){
                 <label>Email</label>
                 <input type="text" />
                 <label>Mật khẩu</label>
-                <input type="text" />
+                <input type="password" />
                 <label>Xác nhận mật khẩu</label>
                 <input type="password"/>
 

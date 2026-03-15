@@ -396,3 +396,132 @@ img{
 .link-row a:hover {
   text-decoration: underline;
 }
+
+
+
+/* Hiển thị hộp thoại sản phẩm */
+.modal{
+  position: fixed;/*Đặt cố định nằm trên màn hình*/
+  top:0;/*full màn*/
+  left:0;/*full màn*/
+  width:100%;
+  height:100%;
+
+  background: rgba(0,0,0,0.5);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:9999;/*mức độ ưu tiên cao nhất, nằm lên trên tất cả*/
+}
+
+/* khung chính */
+.modal-content{
+  background:white;
+  width:900px;
+  max-width:95%;
+  border-radius:12px;
+  display:flex;
+  overflow:hidden;/*ẩn phần nội dung tràn ra ngoài*/
+  position:relative;/*Cho phép đặt các phần tử con position:absolute.Ví dụ nút X đóng modal.*/
+}
+
+/* nút đóng */
+.modal-close{
+  position:absolute;/*Đặt vị trí tương đối với modal-content*/
+  top:0;
+  right:0;
+  font-size:20px;
+  border:none;
+  background:none;
+  cursor:pointer;/*khi hover thì chuột sẽ thành bàn tay*/
+  height:60px;
+  width:60px;
+  transition: all 0.3s ease;
+  font-size: 30px;
+  border-bottom-left-radius: 5px;
+}
+.modal-close:hover{
+  background-color: #f83737;
+}
+
+/* bên trái */
+.modal-left{
+  width:50%;
+  padding:30px;
+  text-align:center;
+  border-right:1px solid #eee;
+}
+
+.modal-left img{
+  height:80%;
+  max-width:350px;
+}
+
+.modal-price{
+  color:red;
+  font-size:28px;
+  font-weight:bold;
+  margin-top:20px;
+}
+
+/* bên phải */
+.modal-right{
+  width:50%;
+  padding:30px;
+}
+
+.modal-right h3{
+  font-size:22px;
+  margin-bottom:20px;
+}
+
+/* kích thước */
+.size-group{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.size-btn{
+  padding:20px 30px;
+  border:2px solid #e9e8e8;
+  border-radius:6px;
+  cursor:pointer;
+  background:#f5f5f5;
+  transition: all 0.2s ease;
+}
+
+.size-btn.active{
+  border:2px solid #16a34a;
+  background:#e6f7ee;
+}
+
+/* ghi chú */
+textarea{
+  width:100%;
+  height:80px;
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:6px;
+}
+
+/* nút thêm giỏ */
+.add-cart{
+  margin-top:80px;
+  width:100%;
+  /* padding:14px; */
+  height:40px;
+  background:#16a34a;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.add-cart:hover{
+  background:#15803d;
+}
