@@ -11,6 +11,8 @@ import Appetizer from "./pages/Appetizer";
 import Salad from "./pages/Salad";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ShoppingCart from "./pages/ShoppingCart";
+
 
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
           <Route path="/drink" element={<Drink />} />        
           <Route path="/login" element={<Login />} />        
           <Route path="/register" element={<Register />} />        
+          <Route path="/shoppingcart" element={<ShoppingCart />} />        
         </Route>
          {/* <Route index element={<Home />}/>
          <Route path="/drink" element={<Drink />} /> */}

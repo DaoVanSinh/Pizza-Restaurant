@@ -3,6 +3,10 @@ import { FaUser } from "react-icons/fa";
 import AccountIcon from "../assets/account-icon.png";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import CartIcon from "./CartIcon";
+import ShoppingCart from "../pages/ShoppingCart";
+import { products } from "../data/products";
+
 
 
 export default function Header(){
@@ -17,7 +21,7 @@ export default function Header(){
         { name: "Salad", path: "/salad" },
         { name: "Thức uống", path: "/drink" },
     ]
-
+    
     return(
         <>
         <div className="header">
@@ -49,9 +53,12 @@ export default function Header(){
                     </NavLink>
                 </li>
                 ))}
+                <CartIcon count={3}/>
             </ul>
         </nav>
         </>
         
     )
 }
+
+
