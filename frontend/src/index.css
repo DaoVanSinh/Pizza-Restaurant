@@ -137,22 +137,24 @@ img{
   padding:15px 40px;
   /* padding: 40px; */
   box-sizing:border-box;
-  /* transition:0.3s; */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* tách nền*/
   transition: transform 0.3s ease;
-  border-radius:30px;
+  border-radius:20px;
 }
 
 .product-card:hover,
 .Promotion-content:hover{
-  background:#f3fbf6;
-  transform:translateY(-5px);
-  color:#038937;
-  outline:2px solid #02ee5d;
+  /* transform:translateY(-8px); nhảy lên*/
+  transform: scale(1.025); /* phóng to */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .product-card img{
-  height:220px;
+  width: 100%;
+  height:200px;
+  display: block;
   object-fit:contain;
+  border-radius: 20px;;
 }
 
 .product-card h3{
@@ -199,11 +201,13 @@ img{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#e7e6e6;
+  background:#f0efef;
   border-radius:30px;
-  margin:0% 10% 1% 10%;
+  margin:0% 10% 2% 10%;
   transition:0.3s;
   outline:2px solid transparent;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* tách nền*/
+
 }
 
 .Link a{
@@ -213,8 +217,9 @@ img{
 
 .Link:hover{
   background:#dcfae7;
-  outline:2px solid #02ee5d;
+  outline:2px solid #91f4b7;
   color:#038937;
+  box-shadow: 0 20px 20px #91f4b7;
 }
 
 /* ================= PROMOTION ================= */
@@ -234,6 +239,8 @@ img{
   padding:1%;
   height:200px;
   transition: transform 0.3s ease;
+  /* box-shadow: 0 10px 20px black; */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* tách nền*/
 
 }
 
