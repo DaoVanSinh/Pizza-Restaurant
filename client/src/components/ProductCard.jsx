@@ -6,7 +6,7 @@ export default function ProductCard({ product }) {
   // const [size, setSize] = useState(null);
   return (
     <>
-    <div className="product-card">
+    <div className="product-card" onClick={() => setShowModal(true)}>
       <img src={product.image} alt={product.name} />
       <h3>{product.name}</h3>
       <p className="desc">{product.description}</p>
