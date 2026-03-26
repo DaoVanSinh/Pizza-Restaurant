@@ -1,0 +1,136 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-container{
+    display:flex;
+    height:100vh;
+    background:#f5f6fa;
+}
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:270px; /* chỉ giữ 1 width */
+    height:100vh;
+    background:#001331;
+    color:white;
+    padding:20px;
+    overflow-y: auto;
+    margin-top:60px;
+}
+.sidebar h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.item-sidebar a{
+    color: white;
+    text-decoration: none;
+}
+.logo{
+    margin-bottom:30px;
+}
+
+.menu-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:15px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+    /* margin-top:10px; */
+}
+.menu-item.active{
+    background:#334155;
+}
+
+.menu-item:hover{
+    background:#334155;
+}
+
+.main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+
+.topbar{
+    position: fixed;
+    top: 0;
+    left: 250px; /* né sidebar */
+    width: calc(100%);
+    height:60px;
+    background: linear-gradient(to right, #ff6a7a, #fca5a5);
+    /* background-color: white; */
+    /* padding:0 25px; */
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    z-index:1000;
+    margin-left:-250px;
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    height: 60px;
+    width: 270px;
+    background: linear-gradient(to right, #ff6a7a, #fca5a5);
+    padding:0 20px;
+    color: white;
+    justify-content: space-between;
+}
+
+.menu-icon{
+    cursor:pointer;
+}
+
+.right{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap:20px;
+    flex: 1;
+    padding:0 25px;
+    color: white;
+
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color: white;
+}
+
+.user img{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+}
+
+.content-bar{
+    margin-top:60px; /* né topbar */
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+.content{
+    padding:20px;
+    /* min-height:1000px; */
+    margin-left:270px;
+}
+

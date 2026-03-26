@@ -1,0 +1,98 @@
+.home-wrapper {
+  padding: 20px;
+}
+
+.home-title {
+  margin-bottom: 20px;
+}
+
+/* KPI */
+.home-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.home-kpi-card {
+  padding: 16px;
+  border-radius: 12px;
+  color: white;
+}
+
+.green { background: #4caf50; }
+.blue { background: #2196f3; }
+.orange { background: #ff9800; }
+.red { background: #e53935; }
+
+/* LAYOUT */
+.home-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* BOX */
+.home-box {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* CHART */
+.home-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 180px;
+  margin-top: 15px;
+}
+
+.home-chart div {
+  width: 25px;
+  background: #e53935;
+  border-radius: 6px;
+}
+
+/* TABLE */
+.home-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.home-table th,
+.home-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* STATUS */
+.tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.done {
+  background: #d4edda;
+  color: #2e7d32;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* RIGHT */
+.home-list li,
+.home-activity li {
+  margin: 8px 0;
+  list-style: none;
+}
+
+/* WARNING */
+.warning {
+  border-left: 5px solid #f44336;
+}

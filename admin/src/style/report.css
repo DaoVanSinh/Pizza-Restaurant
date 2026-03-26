@@ -1,0 +1,73 @@
+.reports {
+  padding: 20px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+/* FILTER */
+.filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter select,
+.filter button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* CHART */
+.chart {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.chart-box {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  height: 200px;
+  margin-top: 20px;
+}
+
+.bar {
+  width: 30px;
+  background: #e53935;
+  border-radius: 6px;
+}
+
+/* TABLE */
+.table {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}

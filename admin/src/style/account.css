@@ -1,0 +1,185 @@
+.account {
+  padding: 20px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* PROFILE */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.role {
+  font-size: 12px;
+  color: #666;
+}
+
+/* BUTTON */
+.btn {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* CHANGE PASSWORD */
+.change-password {
+  background: white;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+}
+
+.change-password label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.change-password input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* ACTION */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel {
+  background: #ccc;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save:hover {
+  background: #c62828;
+}
+/* OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 999; /* 👈 nổi lên trên tất cả */
+}
+
+
+
+
+
+
+.accx-wrapper {
+  padding: 20px;
+}
+
+.accx-title {
+  margin-bottom: 20px;
+}
+
+/* GRID LAYOUT */
+.accx-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* CARD */
+.accx-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* ROW */
+.accx-row {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+.accx-row label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* INPUT */
+.accx-row input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.accx-row input:focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229,57,53,0.1);
+}
+
+/* ACTION */
+.accx-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.accx-save {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.accx-save:hover {
+  background: #c62828;
+}

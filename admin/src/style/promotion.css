@@ -1,0 +1,138 @@
+.promo-wrapper {
+  padding: 20px;
+}
+
+.promo-title {
+  margin-bottom: 20px;
+}
+
+/* TOP */
+.promo-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.promo-top input {
+  width: 250px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.promo-top button {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* BOX */
+.promo-box {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* TABLE */
+.promo-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.promo-table th,
+.promo-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* STATUS */
+.promo-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.active {
+  background: #d4edda;
+  color: #2e7d32;
+}
+
+.exp {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* BUTTON */
+.edit {
+  background: #2196f3;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+
+.delete {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+
+/* MODAL */
+.promo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.promo-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+}
+
+.promo-modal input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+/* ACTION */
+.promo-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel {
+  background: #ccc;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.save {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}

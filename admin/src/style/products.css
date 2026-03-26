@@ -1,0 +1,276 @@
+.padv-container {
+  padding: 20px;
+}
+
+/* HEADER */
+.padv-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.padv-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.padv-add-btn {
+  background: #e53935;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+/* FILTER */
+.padv-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.padv-filter input,
+.padv-filter select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* TABS */
+.padv-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.padv-tabs button {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: #eee;
+  border: none;
+}
+
+.padv-active {
+  background: #e53935 !important;
+  color: white;
+}
+
+/* GRID */
+.padv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* CARD */
+.padv-card {
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.padv-card:hover {
+  transform: translateY(-5px);
+}
+
+.padv-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* INFO */
+.padv-info p {
+  color: #e53935;
+  font-weight: 600;
+}
+
+/* ACTION */
+.padv-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.padv-actions button {
+  padding: 5px 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.padv-actions .danger {
+  background: #e53935;
+  color: white;
+}
+
+/* EMPTY */
+.padv-empty {
+  text-align: center;
+  width: 100%;
+}
+
+/* MODAL */
+.padv-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.padv-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+.padv-modal input {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+
+.padv-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.save {
+  background: #e53935;
+  color: white;
+}
+
+
+.add-product {
+  padding: 20px;
+}
+
+/* TITLE */
+.title-add {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.title-add h2 {
+  font-size: 22px;
+}
+
+.come-back {
+  text-decoration: none;
+  font-size: 22px;
+  color: #333;
+}
+
+/* FORM */
+.form {
+  display: flex;
+  gap: 30px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* LEFT + RIGHT */
+.form-left,
+.form-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* LABEL */
+.form-left label,
+.form-right label {
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+/* INPUT */
+.form-left input,
+.form-left select,
+.form-left textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.2s;
+}
+
+.form-left input:focus,
+.form-left select:focus,
+.form-left textarea:focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229,57,53,0.1);
+}
+
+/* UPLOAD BOX */
+.upload-box {
+  height: 180px;
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.upload-box:hover {
+  border-color: #e53935;
+  background: #fff5f5;
+}
+
+.upload-box p {
+  color: #999;
+}
+
+/* STATUS */
+.status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ACTION */
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* BUTTON */
+.cancel {
+  padding: 10px 16px;
+  border: none;
+  background: #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.submit {
+  padding: 10px 18px;
+  border: none;
+  background: #e53935;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.submit:hover {
+  background: #c62828;
+}
