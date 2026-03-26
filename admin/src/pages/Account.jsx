@@ -1,59 +1,75 @@
 import { useState } from "react";
 import "../style/account.css";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
+export default function AccountProfile() {
+  const [user, setUser] = useState({
+    name: "Nguyễn Văn A",
+    phone: "0123456789",
+    email: "admin@gmail.com",
+    password: "123456"
+  });
 
-export default function Account() {
-  const [showChange, setShowChange] = useState(false);
-
-const navigate = useNavigate();
-
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value
+    });
+  };
 
   return (
-    <div className="account" onClick={() => navigate("/moreAccount")}>
-      <h2>Tài khoản</h2>
+    <div className="accx-wrapper">
+      <div className="accx-title">
+        {/* <Link className="come-back" to="/account">&larr;</Link> */}
+        <h2>Tài khoản</h2>
+      </div>
+      <div className="accx-layout">
 
-      {/* INFO */}
-      <div className="card">
-        <div className="profile">
-          <div className="avatar"></div>
+        {/* LEFT - PROFILE */}
+        <div className="accx-card">
+          <h3>Thông tin cá nhân</h3>
 
-          <div>
-            <h3>Admin</h3>
-            <p>admin@gmail.com</p>
-            <span className="role">Quản trị viên</span>
+          <div className="accx-row">
+            <label>Họ tên</label>
+            <input name="name" value={user.name} onChange={handleChange} />
+          </div>
+
+          <div className="accx-row">
+            <label>Số điện thoại</label>
+            <input name="phone" value={user.phone} onChange={handleChange} />
+          </div>
+
+          <div className="accx-row">
+            <label>Email</label>
+            <input name="email" value={user.email} onChange={handleChange} />
           </div>
         </div>
 
-        <button className="btn" onClick={() => setShowChange(true)}>
-          Đổi mật khẩu
-        </button>
+        {/* RIGHT - PASSWORD */}
+        <div className="accx-card">
+          <h3>Bảo mật</h3>
+
+          <div className="accx-row">
+            <label>Mật khẩu</label>
+            <input type="password" value={user.password} readOnly />
+          </div>
+
+          <div className="accx-row">
+            <label>Mật khẩu mới</label>
+            <input type="password" placeholder="Nhập mật khẩu mới..." />
+          </div>
+
+          <div className="accx-row">
+            <label>Xác nhận</label>
+            <input type="password" placeholder="Nhập lại mật khẩu..." />
+          </div>
+        </div>
       </div>
 
-      {/* MODAL */}
-      {showChange && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Đổi mật khẩu</h3>
-
-            <label>Mật khẩu hiện tại</label>
-            <input type="password" />
-
-            <label>Mật khẩu mới</label>
-            <input type="password" />
-
-            <label>Xác nhận mật khẩu</label>
-            <input type="password" />
-
-            <div className="actions">
-              <button className="cancel" onClick={() => setShowChange(false)}>
-                Hủy
-              </button>
-              <button className="save">Lưu</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ACTION */}
+      <div className="accx-actions">
+        <button className="accx-save">Lưu thay đổi</button>
+      </div>
     </div>
   );
 }

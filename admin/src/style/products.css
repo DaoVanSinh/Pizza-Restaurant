@@ -28,11 +28,18 @@
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
+  justify-content: space-between;
 }
 
-.padv-filter input,
+.padv-filter input{
+  padding: 8px;
+  width:300px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
 .padv-filter select {
   padding: 8px;
+  margin-right:30%;
   border-radius: 6px;
   border: 1px solid #ddd;
 }
@@ -42,15 +49,20 @@
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
+  /* justify-content: space-between; */
 }
 
 .padv-tabs button {
+  height:40px;
+  width:100px;
   padding: 8px 14px;
   border-radius: 20px;
-  background: #eee;
+  background: white;
   border: none;
+  transition: all 0.3s ease;
 }
 
+.padv-tabs button:hover,
 .padv-active {
   background: #e53935 !important;
   color: white;
@@ -82,15 +94,20 @@
 }
 
 /* INFO */
+.padv-info h4{
+  margin-top:10px;
+}
 .padv-info p {
   color: #e53935;
   font-weight: 600;
+  margin-top:10px;
 }
 
 /* ACTION */
 .padv-actions {
   display: flex;
   justify-content: space-between;
+  margin-top:20px;
 }
 
 .padv-actions button {
@@ -100,9 +117,16 @@
   cursor: pointer;
 }
 
-.padv-actions .danger {
+.padv-actions .danger{
   background: #e53935;
   color: white;
+  width:80px;
+  height:30px;
+}
+.padv-actions .edit {
+  background:rgb(0, 194, 42);
+  color: white;
+  width:80px;
 }
 
 /* EMPTY */

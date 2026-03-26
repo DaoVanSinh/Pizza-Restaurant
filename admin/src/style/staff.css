@@ -3,6 +3,9 @@
   background: #f5f6fa;
   min-height: 100vh;
 }
+.staff h2{
+  margin-bottom:15px;
+}
 
 /* TOP BAR */
 .top-bar {
@@ -12,8 +15,8 @@
 }
 
 .top-bar input {
-  width: 250px;
   padding: 8px;
+  width:300px;
   border-radius: 6px;
   border: 1px solid #ddd;
 }
@@ -26,6 +29,7 @@
   border-radius: 6px;
   border: none;
   cursor: pointer;
+  text-decoration: none;
 }
 
 /* TABLE */

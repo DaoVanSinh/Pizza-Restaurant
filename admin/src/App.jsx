@@ -1,6 +1,6 @@
 import './App.css'
 import Topbar from './components/AdminLayout'
-import Sidebar from './components/Sidebar'
+// import Sidebar from './components/Sidebar'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminLayout from './components/AdminLayout';
 import Report from './pages/Report';
@@ -12,7 +12,7 @@ import Staff from './pages/Staff/Staff';
 import AddProduct from './pages/Products/AddProducts';
 // import AddStaff from './pages/Staff/AddStaff';
 import AddStaff from './pages/staff/AddStaff';
-import MoreAccount from './pages/MoreAccount';
+import MoreAccount from './pages/Account';
 import Pos from './pages/Pos';
 
 

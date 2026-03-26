@@ -121,7 +121,10 @@
 
 .accx-title {
   margin-bottom: 20px;
+  display: flex;  
+  gap:10px;
 }
+
 
 /* GRID LAYOUT */
 .accx-layout {

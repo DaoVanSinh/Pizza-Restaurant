@@ -110,11 +110,16 @@ html, body {
 
 }
 
-.user{
+.user {
+    position: relative; 
     display:flex;
     align-items:center;
     gap:10px;
     color: white;
+    width:150px;
+    justify-content: center;
+    height:60px;
+    transition: all 0.3s ease;
 }
 
 .user img{
@@ -122,6 +127,87 @@ html, body {
     height:35px;
     border-radius:50%;
 }
+.user:hover{
+    background-color: #ff6a7a;
+    transition: all 0.3s ease;
+}
+
+.modal-account {
+  position: absolute;
+  top: 65px;
+  right: 0;
+  z-index: 1000;
+
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+
+  transition: all 0.25s ease;
+}
+
+/* khi mở */
+.modal-account.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* ===== DROPDOWN BOX ===== */
+.dropdown {
+  width: 180px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  animation: fadeIn 0.25s ease;
+}
+
+/* ===== ITEM ===== */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.dropdown-item .icon {
+  font-size: 16px;
+}
+
+/* hover effect */
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+/* logout màu đỏ */
+.dropdown-item.logout {
+  color: #e74c3c;
+}
+
+.dropdown-item.logout:hover {
+  background: #ffecec;
+}
+hr{
+    margin:10px 0 10px 0;
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 .content-bar{
     margin-top:60px; /* né topbar */
@@ -133,4 +219,6 @@ html, body {
     /* min-height:1000px; */
     margin-left:270px;
 }
+
+
 

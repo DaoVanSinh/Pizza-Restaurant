@@ -1,10 +1,17 @@
-import { FaPizzaSlice, FaUtensils, FaBars, FaSearch, FaHome,FaUsers, FaUser, FaBoxOpen, FaCashRegister } from "react-icons/fa";
+import { FaPizzaSlice, FaUtensils, FaBars, FaSearch, FaHome,FaUsers, FaUser, FaBoxOpen, FaCashRegister, FaChevronDown } from "react-icons/fa";
 import { BiSolidOffer } from "react-icons/bi";
 import userIcon from "../assets/userIcon.png";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import { useState } from "react";
+import ModalAccount from "./ModalAccount";
+
+
 
 
 export default function AdminLayout() {
+  
+  const [showModal, setShowModal] = useState(false);
+
   const menu = [
   { icon: <FaHome />, label: "Trang chủ", path: "/" },
   { icon: <BiSolidOffer />, label: "Khuyến mãi", path: "/promotion" },
@@ -14,6 +21,7 @@ export default function AdminLayout() {
   { icon: <FaUser />, label: "Tài khoản", path: "/account" },
   { icon: <FaCashRegister/>, label: "POS", path: "/pos" },
 ];
+
   return (
     <div className="admin-container">     
       <div className="sidebar">
@@ -41,9 +49,13 @@ export default function AdminLayout() {
 
           <div className="right">
             <FaSearch className="search-icon" />
-            <div className="user">
-              <span>Admin</span>
-              <img src={userIcon} alt="user" />
+            <div className="user" onClick={() => setShowModal(prev => !prev)}>
+              <img  src={userIcon} alt="user" />
+              <span>Admin </span><FaChevronDown/>
+              <div className={`modal-account ${showModal ? "show" : ""}`}>
+                <ModalAccount />
+              </div>
+
             </div>
           </div>
         </header>

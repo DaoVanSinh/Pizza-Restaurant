@@ -18,7 +18,7 @@ const mockData = [
     id: 1,
     name: "Pizza Hải sản",
     category: "Pizza",
-    price: "200.000đ",
+    price: "200.000",
     status: true,
     img: "http://thepizzacompany.vn/images/thumbs/000/0004576_chickenshrimplotusnulty_300.png"
   },
@@ -26,7 +26,7 @@ const mockData = [
     id: 2,
     name: "Gà rán giòn",
     category: "Gà rán",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img : "http://thepizzacompany.vn/images/thumbs/000/0004115_bbq-chicken-platter-2pcs_300.png"
   },
@@ -34,7 +34,7 @@ const mockData = [
     id: 3,
     name: "Mì ý Ngao xanh",
     category: "Mì ý",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img: "http://thepizzacompany.vn/images/thumbs/000/0004037_clams-spaghetti-with-thai-basil-sauce_300.png"
   },
@@ -42,7 +42,7 @@ const mockData = [
     id: 4,
     name: "Nui bỏ lò",
     category: "Nui bỏ lò",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img: "http://thepizzacompany.vn/images/thumbs/000/0004000_h-m-w-cream-sauce-macaroni_300.png"
   },
@@ -50,7 +50,7 @@ const mockData = [
     id: 5,
     name: "Khai vị",
     category: "Khai vị",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img : "http://thepizzacompany.vn/images/thumbs/000/0004137_platter-bbq_300.png"
   },
@@ -58,7 +58,7 @@ const mockData = [
     id: 6,
     name: "Salad trộn ngon",
     category: "Salad",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img : "http://thepizzacompany.vn/images/thumbs/000/0002252_garden-salad_300.png"
   },
@@ -66,7 +66,7 @@ const mockData = [
     id: 7,
     name: "7 up",
     category: "Thức uống",
-    price: "120.000đ",
+    price: "120.000",
     status: true,
     img : "http://thepizzacompany.vn/images/thumbs/000/0004178_7-up-can_300.png"
     
@@ -77,7 +77,7 @@ export default function Products() {
   const [activeTab, setActiveTab] = useState("Pizza");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
-  const [editItem, setEditItem] = useState(null);
+  // const [editItem, setEditItem] = useState(null);
 
   const filtered = mockData
     .filter(
@@ -97,13 +97,11 @@ export default function Products() {
       {/* HEADER */}
       <div className="padv-header">
         <div className="padv-title">
-          <FaBoxOpen size={24} />
+          {/* <FaBoxOpen size={24} /> */}
           <h2>Quản lý sản phẩm</h2>
         </div>
 
-        <Link to="/addProducts" className="padv-add-btn">
-          + Thêm sản phẩm
-        </Link>
+       
       </div>
 
       {/* FILTER */}
@@ -118,6 +116,10 @@ export default function Products() {
           <option value="low">Giá thấp → cao</option>
           <option value="high">Giá cao → thấp</option>
         </select>
+
+         <Link to="/addProducts" className="padv-add-btn">
+          + Thêm sản phẩm
+        </Link>
       </div>
 
       {/* CATEGORY */}
@@ -148,7 +150,7 @@ export default function Products() {
               </div>
 
               <div className="padv-actions">
-                <button onClick={() => setEditItem(item)}>Sửa</button>
+                <button className="edit">Sửa</button>
                 <button className="danger">Xóa</button>
               </div>
             </div>
@@ -156,25 +158,7 @@ export default function Products() {
         )}
       </div>
 
-      {/* MODAL EDIT */}
-      {editItem && (
-        <div className="padv-overlay" onClick={() => setEditItem(null)}>
-          <div
-            className="padv-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3>Sửa sản phẩm</h3>
-
-            <input defaultValue={editItem.name} />
-            <input defaultValue={editItem.price} />
-
-            <div className="padv-modal-actions">
-              <button onClick={() => setEditItem(null)}>Hủy</button>
-              <button className="save">Lưu</button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
