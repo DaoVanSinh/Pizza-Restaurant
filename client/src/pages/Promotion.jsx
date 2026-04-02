@@ -1,57 +1,23 @@
-import { products } from "../data/products";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function Promotion(){
-    const promotionProducts = products.filter(
-        p => p.category === "promotion"
-    );
-    return(
+export default function Promotion() {
+    const [promotionProducts, setPromotionProducts] = useState([]);
+
+    useEffect(() => {
+        // Lấy sản phẩm khuyến mãi từ MySQL [cite: 52]
+        axios.get("http://localhost:8080/api/products?category=promotion")
+            .then(res => setPromotionProducts(res.data))
+            .catch(err => console.error("Lỗi lấy khuyến mãi:", err));
+    }, []);
+
+    return (
         <>
-            <PromotionList 
-                title="Các khuyến mãi và combo" 
-                product={promotionProducts} 
+            <PromotionList
+                title="Các khuyến mãi và combo"
+                product={promotionProducts}
             />
         </>
-    )
+    );
 }
 
-function PromotionList({title, product}) {
-    return(
-        <>
-            <div className="promotionList">
-                <h2>{title}</h2>
-                <div>
-                    {product.map((product) => (
-                        <PromotionCard 
-                            key={product.id} 
-                            product={product}
-                        />
-                    ))}
-                </div>
-            </div>
-        </>
-    )
-}
-
-function PromotionCard({product}) {
-    return(
-        <>
-            <div className="Promotion-container">
-                <div className="Promotion-content">
-                    <img 
-                        src={product.image} 
-                        alt="Promotion"
-                    />
-                    <div className="Promotion-details">
-                        <h3>{product.name}</h3>
-                        <p>{product.description}</p>
-                        <div className="promotion-price">
-                        <button>
-                            Xem chi tiết
-                        </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
-}

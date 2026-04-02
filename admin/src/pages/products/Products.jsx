@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { FaBoxOpen } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../../style/Products.css";
@@ -13,76 +14,46 @@ const categories = [
   "Thức uống"
 ];
 
-const mockData = [
-  {
-    id: 1,
-    name: "Pizza Hải sản",
-    category: "Pizza",
-    price: "200.000",
-    status: true,
-    img: "http://thepizzacompany.vn/images/thumbs/000/0004576_chickenshrimplotusnulty_300.png"
-  },
-  {
-    id: 2,
-    name: "Gà rán giòn",
-    category: "Gà rán",
-    price: "120.000",
-    status: true,
-    img : "http://thepizzacompany.vn/images/thumbs/000/0004115_bbq-chicken-platter-2pcs_300.png"
-  },
-  {
-    id: 3,
-    name: "Mì ý Ngao xanh",
-    category: "Mì ý",
-    price: "120.000",
-    status: true,
-    img: "http://thepizzacompany.vn/images/thumbs/000/0004037_clams-spaghetti-with-thai-basil-sauce_300.png"
-  },
-  {
-    id: 4,
-    name: "Nui bỏ lò",
-    category: "Nui bỏ lò",
-    price: "120.000",
-    status: true,
-    img: "http://thepizzacompany.vn/images/thumbs/000/0004000_h-m-w-cream-sauce-macaroni_300.png"
-  },
-  {
-    id: 5,
-    name: "Khai vị",
-    category: "Khai vị",
-    price: "120.000",
-    status: true,
-    img : "http://thepizzacompany.vn/images/thumbs/000/0004137_platter-bbq_300.png"
-  },
-  {
-    id: 6,
-    name: "Salad trộn ngon",
-    category: "Salad",
-    price: "120.000",
-    status: true,
-    img : "http://thepizzacompany.vn/images/thumbs/000/0002252_garden-salad_300.png"
-  },
-  {
-    id: 7,
-    name: "7 up",
-    category: "Thức uống",
-    price: "120.000",
-    status: true,
-    img : "http://thepizzacompany.vn/images/thumbs/000/0004178_7-up-can_300.png"
-    
-  }
-];
-
 export default function Products() {
   const [activeTab, setActiveTab] = useState("Pizza");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
-  // const [editItem, setEditItem] = useState(null);
+  
+  // 1. Tạo state để lưu danh sách sản phẩm thực tế từ Backend
+  const [products, setProducts] = useState([]);
 
-  const filtered = mockData
+  // 2. Gọi API lấy dữ liệu mỗi khi đổi Tab hoặc load trang
+  const fetchProducts = async () => {
+    try {
+      // Gọi đúng Endpoint lọc theo loại mà bạn đã viết ở Backend
+      const response = await axios.get(`http://localhost:8080/api/products?category=${activeTab}`);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [activeTab]);
+
+  // 3. Hàm xử lý Xóa sản phẩm thực tế trong MySQL
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi hệ thống?")) {
+      try {
+        await axios.delete(`http://localhost:8080/api/products/${id}`);
+        alert("Xóa thành công!");
+        fetchProducts(); // Tải lại danh sách sau khi xóa
+      } catch (error) {
+        alert("Lỗi khi xóa sản phẩm!");
+      }
+    }
+  };
+
+  // Logic lọc và sắp xếp dựa trên dữ liệu thật 'products'
+  const filtered = products
     .filter(
       (item) =>
-        item.category === activeTab &&
         item.name.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
@@ -97,11 +68,8 @@ export default function Products() {
       {/* HEADER */}
       <div className="padv-header">
         <div className="padv-title">
-          {/* <FaBoxOpen size={24} /> */}
           <h2>Quản lý sản phẩm</h2>
         </div>
-
-       
       </div>
 
       {/* FILTER */}
@@ -122,7 +90,7 @@ export default function Products() {
         </Link>
       </div>
 
-      {/* CATEGORY */}
+      {/* CATEGORY TABS */}
       <div className="padv-tabs">
         {categories.map((cat) => (
           <button
@@ -135,30 +103,30 @@ export default function Products() {
         ))}
       </div>
 
-      {/* GRID */}
+      {/* GRID HIỂN THỊ DỮ LIỆU THẬT */}
       <div className="padv-grid">
         {filtered.length === 0 ? (
-          <p className="padv-empty">Không có sản phẩm</p>
+          <p className="padv-empty">Không có sản phẩm nào trong mục {activeTab}</p>
         ) : (
           filtered.map((item) => (
             <div className="padv-card" key={item.id}>
-              <img src={item.img} alt="" />
+              {/* Lưu ý: Dùng item.imageUrl để khớp với Backend Sinh */}
+              <img src={item.imageUrl} alt={item.name} />
 
               <div className="padv-info">
                 <h4>{item.name}</h4>
-                <p>{item.price.toLocaleString()}đ</p>
+                <p>{item.price?.toLocaleString()}đ</p>
               </div>
 
               <div className="padv-actions">
                 <button className="edit">Sửa</button>
-                <button className="danger">Xóa</button>
+                {/* Gán hàm handleDelete vào nút Xóa */}
+                <button className="danger" onClick={() => handleDelete(item.id)}>Xóa</button>
               </div>
             </div>
           ))
         )}
       </div>
-
-      
     </div>
   );
 }

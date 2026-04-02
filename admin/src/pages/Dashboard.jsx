@@ -1,38 +1,62 @@
-import "../style/dashboard.css"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "../style/dashboard.css";
 
 export default function Dashboard() {
+
+  const [stats, setStats] = useState({
+    revenue: 0,
+    orders: 0,
+    customers: 0,
+    products: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        
+        const response = await axios.get("http://localhost:8080/api/dashboard/stats");
+        setStats(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu thống kê:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="home-wrapper">
       <h2 className="home-title">Tổng quan cửa hàng</h2>
 
-      {/* KPI */}
+      {}
       <div className="home-kpi-grid">
         <div className="home-kpi-card green">
           <p>Doanh thu hôm nay</p>
-          <h3>6.500.000đ</h3>
+          <h3>{stats.revenue?.toLocaleString() || 0}đ</h3>
         </div>
 
         <div className="home-kpi-card blue">
           <p>Đơn hàng</p>
-          <h3>58</h3>
+          <h3>{stats.orders || 0}</h3>
         </div>
 
         <div className="home-kpi-card orange">
-          <p>Khách mới</p>
-          <h3>18</h3>
+          <p>Khách hàng</p>
+          <h3>{stats.customers || 0}</h3>
         </div>
 
         <div className="home-kpi-card red">
           <p>Sản phẩm</p>
-          <h3>72</h3>
+          <h3>{stats.products || 0}</h3>
         </div>
       </div>
 
-      {/* MAIN */}
+      {}
       <div className="home-layout">
         {/* LEFT */}
         <div className="home-left-col">
-          {/* CHART */}
+          {}
           <div className="home-box">
             <h3>Doanh thu tuần</h3>
             <div className="home-chart">
@@ -46,7 +70,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ORDER LIST */}
+          {}
           <div className="home-box">
             <h3>Đơn hàng mới</h3>
             <table className="home-table">
@@ -58,7 +82,6 @@ export default function Dashboard() {
                   <th>Trạng thái</th>
                 </tr>
               </thead>
-
               <tbody>
                 <tr>
                   <td>#101</td>
@@ -66,7 +89,6 @@ export default function Dashboard() {
                   <td>Pizza bò</td>
                   <td><span className="tag done">Đã giao</span></td>
                 </tr>
-
                 <tr>
                   <td>#102</td>
                   <td>Hà</td>
