@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Drink from "./pages/Drink";
 import Layout from "./components/Layout";
@@ -12,11 +12,21 @@ import Salad from "./pages/Salad";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ShoppingCart from "./pages/ShoppingCart";
+import SearchPage from "./pages/Search";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPasswordForm from "./pages/ResetPasswordForm";
+import Profile from "./pages/Profile";
+import VNPayReturn from "./pages/VNPayReturn";
 
-
+import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import { Toaster } from "./components/ui/Sonner";
 
 function App() {
   return (
+    <AuthProvider>
+      <CartProvider>
+        <Toaster />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -29,12 +39,17 @@ function App() {
           <Route path="/salad" element={<Salad />} />        
           <Route path="/drink" element={<Drink />} />        
           <Route path="/login" element={<Login />} />        
+          <Route path="/forgot-password" element={<ForgotPassword />} />        
+          <Route path="/reset-password" element={<ResetPasswordForm />} />        
           <Route path="/register" element={<Register />} />        
-          <Route path="/shoppingcart" element={<ShoppingCart />} />        
+          <Route path="/shoppingcart" element={<ShoppingCart />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/payment/vnpay-return" element={<VNPayReturn />} />
         </Route>
-         {/* <Route index element={<Home />}/>
-         <Route path="/drink" element={<Drink />} /> */}
       </Routes>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

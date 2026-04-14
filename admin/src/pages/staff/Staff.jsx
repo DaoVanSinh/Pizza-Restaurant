@@ -1,36 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../style/Staff.css";
 import { Link } from "react-router-dom";
-
-const mockStaff = [
-  {
-    id: 1,
-    name: "Nguyễn Văn Nam",
-    role: "Giao hàng",
-    shift: "Ca sáng",
-    status: true
-  },
-  {
-    id: 2,
-    name: "Trần Thị Lan",
-    role: "Thu ngân",
-    shift: "Ca tối",
-    status: false
-  }
-];
+import { toast } from "sonner";
+import { userApi } from "../../services/modules/user.api";
 
 export default function Staff() {
   const [search, setSearch] = useState("");
+  const [staffs, setStaffs] = useState([]);
 
-  const filtered = mockStaff.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    fetchStaffs();
+  }, []);
+
+  const fetchStaffs = async () => {
+    try {
+      const res = await userApi.getAllUsers();
+      setStaffs(res.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc muốn xóa nhân viên này?")) {
+      try {
+        await userApi.deleteUser(id);
+        setStaffs(staffs.filter((s) => s.id !== id));
+      } catch (error) {
+        toast.error("Lỗi khi xóa nhân viên!");
+      }
+    }
+  };
+
+  const filtered = staffs.filter((s) =>
+    (s.fullName || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="staff">
       <h2>Quản lý nhân viên</h2>
 
-      {/* TOP BAR */}
       <div className="top-bar">
         <input
           type="text"
@@ -40,15 +49,14 @@ export default function Staff() {
         <Link to="/addStaff" className="btn">+ Thêm nhân viên</Link>
       </div>
 
-      {/* TABLE */}
       <div className="table">
         <table>
           <thead>
             <tr>
-              <th>Tên</th>
-              <th>Chức vụ</th>
-              <th>Ca làm</th>
-              <th>Trạng thái</th>
+              <th>Họ Tên</th>
+              <th>Số điện thoại</th>
+              <th>Chức vụ (Role)</th>
+              <th>Email</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -58,28 +66,24 @@ export default function Staff() {
               <tr key={staff.id}>
                 <td className="name-cell">
                   <div className="avatar"></div>
-                  {staff.name}
+                  {staff.fullName}
                 </td>
 
-                <td>{staff.role}</td>
-                <td>{staff.shift}</td>
+                <td>{staff.phone}</td>
+                <td><span className="status active">{staff.role}</span></td>
+                <td>{staff.email}</td>
 
                 <td>
-                  <span
-                    className={
-                      staff.status ? "status active" : "status inactive"
-                    }
-                  >
-                    {staff.status ? "Đang làm" : "Nghỉ"}
-                  </span>
-                </td>
-
-                <td>
-                  <button className="edit">Sửa</button>
-                  <button className="delete">Xóa</button>
+                  <button className="delete" onClick={() => handleDelete(staff.id)}>Xóa</button>
                 </td>
               </tr>
             ))}
+            
+            {filtered.length === 0 && (
+                <tr>
+                    <td colSpan={5} style={{textAlign: "center", padding: "20px 0"}}>Không tìm thấy nhân viên nào</td>
+                </tr>
+            )}
           </tbody>
         </table>
       </div>

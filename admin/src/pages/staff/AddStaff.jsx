@@ -1,63 +1,69 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../../style/staff.css";
+import { userApi } from "../../services/modules/user.api";
+import { toast } from "sonner";
 
 export default function AddEmployee() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+      fullName: "",
+      email: "",
+      phone: "",
+      role: "STAFF",
+      password: ""
+  });
+
+  const handleSubmit = async () => {
+      if(!formData.fullName || !formData.phone || !formData.password) {
+          toast.warning("Vui lòng nhập tên, SĐT và Mật khẩu!");
+          return;
+      }
+      
+      try {
+          await userApi.registerUser(formData);
+          toast.success("Thêm nhân viên thành công!");
+          navigate("/staff");
+      } catch(err) {
+          toast.error("Lỗi thêm nhân viên (Có thể SĐT đã tồn tại)");
+      }
+  };
+
   return (
     <div className="emp-add-wrapper">
-
-      {/* HEADER */}
       <div className="emp-add-header">
-        <Link to="/staff" className="emp-back">
-          &larr;
-        </Link>
-        <h2>Thêm nhân viên</h2>
+        <Link to="/staff" className="emp-back">&larr;</Link>
+        <h2>Thêm nhân viên mới</h2>
       </div>
 
-      {/* FORM */}
       <div className="emp-add-form">
-
-        {/* LEFT */}
         <div className="emp-left">
           <label>Họ và tên</label>
-          <input type="text" placeholder="Nguyễn Văn A" />
+          <input type="text" placeholder="Nguyễn Văn A" value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} />
 
           <label>Email</label>
-          <input type="email" placeholder="email@gmail.com" />
+          <input type="email" placeholder="email@gmail.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
 
           <label>Số điện thoại</label>
-          <input type="text" placeholder="0123456789" />
+          <input type="text" placeholder="0123456789" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
 
-          <label>Chức vụ</label>
-          <select>
-            <option>Nhân viên</option>
-            <option>Quản lý</option>
+          <label>Cấp độ (Role)</label>
+          <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+            <option value="STAFF">Nhân viên (STAFF)</option>
+            <option value="ADMIN">Quản lý (ADMIN)</option>
           </select>
         </div>
 
-        {/* RIGHT */}
         <div className="emp-right">
-          <label>Ảnh đại diện</label>
-          <div className="emp-upload">
-            <p>+ Tải ảnh</p>
-          </div>
-
-          <label>Trạng thái</label>
-          <div className="emp-status">
-            <input type="checkbox" defaultChecked />
-            <span>Đang làm việc</span>
-          </div>
-
-          <label>Mật khẩu</label>
-          <input type="password" placeholder="********" />
+          <label>Mật khẩu đăng nhập</label>
+          <input type="password" placeholder="********" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
         </div>
       </div>
 
-      {/* ACTION */}
       <div className="emp-actions">
-        <button className="emp-cancel">Hủy</button>
-        <button className="emp-save">Thêm nhân viên</button>
+        <Link to="/staff" className="emp-cancel" style={{textDecoration: 'none', textAlign: 'center'}}>Hủy</Link>
+        <button className="emp-save" onClick={handleSubmit}>Lưu nhân viên</button>
       </div>
-
     </div>
   );
 }

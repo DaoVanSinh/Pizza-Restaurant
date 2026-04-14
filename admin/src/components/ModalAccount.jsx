@@ -1,24 +1,36 @@
-import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaUserCircle, FaSignOutAlt, FaShieldAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ModalAccount() {
+  const navigate = useNavigate();
+  const userInfo = JSON.parse(localStorage.getItem("user_info") || "{}");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_info");
+    navigate("/login");
+  };
+
   return (
     <div className="dropdown">
+      <div className="px-4 py-3 border-b border-slate-100">
+        <p className="text-sm font-bold text-slate-900 truncate">{userInfo.fullName || userInfo.username || "Admin"}</p>
+        <p className="text-xs text-slate-500 truncate">{userInfo.email || "admin@pizza.com"}</p>
+      </div>
+
       <Link to="/account" className="dropdown-item">
         <FaUserCircle className="icon" />
-        <span>Tài khoản</span>
+        <span>Hồ sơ của tôi</span>
       </Link>
 
-      <div className="dropdown-item logout">
+      <div className="dropdown-item logout" onClick={handleLogout}>
         <FaSignOutAlt className="icon" />
         <span>Đăng xuất</span>
       </div>
-        <hr></hr>
+        <hr className="border-slate-100"></hr>
       <div className="dropdown-item">
-      <span>Điều khoản dịch vụ</span>
-      </div>
-      <div className="dropdown-item">
-      <span>Chính sách bảo mật</span>
+        <FaShieldAlt className="icon text-slate-400" />
+        <span className="text-slate-500 text-xs uppercase tracking-wider font-bold">Privacy Policy</span>
       </div>
     </div>
   );

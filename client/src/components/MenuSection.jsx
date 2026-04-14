@@ -1,45 +1,27 @@
-import { Link } from "react-router-dom";
-import { products} from "../data/products";
-import ProductCard from "./ProductCard";
+import { useState, useEffect } from "react";
+import { productApi } from "../services/modules/product.api";
 import ProductList from "./ProductList";
 
 export default function MenuSection() {
-  const promotionProducts = products.filter(
-    item => item.category === "promotion"
-  );
-  const pizzaProducts = products.filter(
-    item => item.category === "pizza"
-  );
-  const chickenVibeProducts = products.filter(
-    item => item.category === "chickenVibe"
-  );
-  const pastaProducts = products.filter(
-    item => item.category === "pasta"
-  );
-  const bakedProducts = products.filter(
-    item => item.category ==="baked"
-  );
-  const appetizerProducts = products.filter(
-    item => item.category === "appetizer"
-  );
-  const saladProducts = products.filter(
-    item => item.category === "salad"
-  );
-  const drinkProducts = products.filter(
-    item => item.category === "drink"
-  );
-  
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    productApi.getRaw("/client/products")
+      .then(res => setAllProducts(res.data || []))
+      .catch(err => console.error("Lỗi MenuSection:", err));
+  }, []);
+  const filterByCat = (cat) => allProducts.filter(item => item.category?.toLowerCase() === cat.toLowerCase());
+
   return (
     <>
-    <ProductList title="Combo và những khuyến mãi" products={promotionProducts}/>
-    <ProductList title="Pizza" products={pizzaProducts}/>
-    <ProductList title="Gà Vibe" products={chickenVibeProducts}/>
-    <ProductList title="Mì Ý" products={pastaProducts}/>
-    <ProductList title="Nui bỏ lò" products={bakedProducts}/>
-    <ProductList title="Khai vị" products={appetizerProducts}/>
-    <ProductList title="Salad" products={saladProducts}/>
-    <ProductList title="Thức uống" products={drinkProducts}/>
+      <ProductList title="Khuyến Mãi" products={filterByCat("khuyen-mai")}/>
+      <ProductList title="Pizza" products={filterByCat("pizza")}/>
+      <ProductList title="Gà Ngon Vibe" products={filterByCat("ga-ngon-vibe")}/>
+      <ProductList title="Mì Ý" products={filterByCat("mi-y")}/>
+      <ProductList title="Nui Bỏ Lò" products={filterByCat("nui-bo-lo")}/>
+      <ProductList title="Khai Vị" products={filterByCat("khai-vi")}/>
+      <ProductList title="Salad" products={filterByCat("salad")}/>
+      <ProductList title="Thức Uống" products={filterByCat("thuc-uong")}/>
     </>
-    
-  )
+  );
 }
