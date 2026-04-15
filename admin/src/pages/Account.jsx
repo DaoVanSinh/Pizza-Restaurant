@@ -108,6 +108,15 @@ export default function AccountProfile() {
     }
   };
 
+  const displayRole = (role) => {
+    if (!role) return "Người dùng";
+    switch (role.toLowerCase()) {
+      case "admin": return "Quản Trị Viên";
+      case "staff": return "Nhân Viên";
+      default:      return "Người Dùng";
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -157,7 +166,9 @@ export default function AccountProfile() {
             
             <div className="text-center space-y-1">
               <h3 className="font-bold text-xl">{user.fullName || user.username}</h3>
-              <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold opacity-70">Quản Trị Viên</p>
+              <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold opacity-70">
+                {displayRole(JSON.parse(localStorage.getItem("user_info") || "{}").role)}
+              </p>
             </div>
 
             {imageFile && (

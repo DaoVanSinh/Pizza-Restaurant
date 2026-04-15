@@ -1,4 +1,4 @@
-@tailwind base;
+  @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,7 +10,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 346.8 77.2% 49.8%;
+    --primary: 141 82% 23%;
     --primary-foreground: 355.7 100% 97.3%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 346.8 77.2% 49.8%;
+    --ring: 141 82% 23%;
     --radius: 0.5rem;
   }
 
@@ -33,7 +33,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 346.8 77.2% 49.8%;
+    --primary: 141 82% 23%;
     --primary-foreground: 355.7 100% 97.3%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -45,7 +45,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 346.8 77.2% 49.8%;
+    --ring: 141 82% 23%;
   }
 }
 
@@ -82,13 +82,18 @@ html, body {
     position: fixed;
     top: 0;
     left: 0;
-    width:270px; /* chỉ giữ 1 width */
+    width:270px;
     height:100vh;
-    background:#001331;
+    background:#063d1a;
     color:white;
     padding:20px;
     overflow-y: auto;
     margin-top:60px;
+    transition: transform 0.3s ease;
+    z-index: 1010;
+}
+.sidebar-closed .sidebar {
+    transform: translateX(-100%);
 }
 .sidebar h2{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -112,11 +117,11 @@ html, body {
     /* margin-top:10px; */
 }
 .menu-item.active{
-    background:#334155;
+    background:#0b6b2d;
 }
 
 .menu-item:hover{
-    background:#334155;
+    background:#025421;
 }
 
 .main{
@@ -129,16 +134,15 @@ html, body {
 .topbar{
     position: fixed;
     top: 0;
-    left: 250px; /* né sidebar */
+    left: 250px;
     width: calc(100%);
     height:60px;
-    background: linear-gradient(to right, #ff6a7a, #fca5a5);
-    /* background-color: white; */
-    /* padding:0 25px; */
+    background: white;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    border-bottom: 2px solid #0b6b2d;
     z-index:1000;
     margin-left:-250px;
 }
@@ -149,10 +153,29 @@ html, body {
     gap:20px;
     height: 60px;
     width: 270px;
-    background: linear-gradient(to right, #ff6a7a, #fca5a5);
+    background: #0b6b2d;
     padding:0 20px;
     color: white;
     justify-content: space-between;
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar-closed .left {
+    width: 60px;
+    padding: 0;
+    justify-content: center;
+}
+
+.sidebar-title {
+    white-space: nowrap;
+    transition: opacity 0.2s ease, width 0.2s ease;
+}
+
+.sidebar-closed .sidebar-title {
+    opacity: 0;
+    width: 0;
+    visibility: hidden;
 }
 
 .menu-icon{
@@ -166,8 +189,7 @@ html, body {
     gap:20px;
     flex: 1;
     padding:0 25px;
-    color: white;
-
+    color: #063d1a;
 }
 
 .user {
@@ -175,9 +197,10 @@ html, body {
     display:flex;
     align-items:center;
     gap:10px;
-    color: white;
-    width:150px;
+    color: #475569;
+    width:160px;
     justify-content: center;
+    cursor: pointer;
     height:60px;
     transition: all 0.3s ease;
 }
@@ -188,7 +211,7 @@ html, body {
     border-radius:50%;
 }
 .user:hover{
-    background-color: #ff6a7a;
+    background-color: #f1f5f9;
     transition: all 0.3s ease;
 }
 
@@ -278,6 +301,11 @@ hr{
     padding:20px;
     /* min-height:1000px; */
     margin-left:270px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar-closed .content {
+    margin-left: 0;
 }
 
 

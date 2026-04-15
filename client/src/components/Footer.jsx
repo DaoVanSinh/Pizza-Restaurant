@@ -1,4 +1,4 @@
-import LogoImg from "../assets/logo.png";
+import LogoImg from "../assets/new_logo.png";
 import { Link, NavLink } from "react-router-dom";
 import Noti from "../assets/noti.png";
 
@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="flex flex-col items-center md:items-start text-center md:text-left">
         <img src={LogoImg} alt="Logo" className="w-[150px] md:w-[200px]" />
         <div className="mt-4">
-          <span className="font-bold text-lg">094349388</span>
+          <span className="font-bold text-lg">0868612345</span>
           <p className="font-semibold text-sm">GIAO HÀNG NHANH</p>
         </div>
       </div>
@@ -35,8 +35,8 @@ export default function Footer() {
         <NavLink to="/" className="hover:underline">Điều khoản và Điều kiện</NavLink>
         
         <h3 className="text-lg font-bold mt-4 mb-2">TỔNG ĐÀI HỖ TRỢ</h3>
-        <span className="text-gray-200">Đặt hàng: 1900 6066 (9:30 - 21:30)</span>
-        <span className="text-gray-200">Tổng đài CSKH: 1900 633 606 (9:30 - 21:30)</span>
+        <span className="text-gray-200">Đặt hàng: 0868.612.345 (9:30 - 21:30)</span>
+        <span className="text-gray-200">Tổng đài CSKH: 0868.612.345 (9:30 - 21:30)</span>
       </div>
 
       <div className="flex flex-col items-center md:items-start">

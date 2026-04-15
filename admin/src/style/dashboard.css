@@ -23,7 +23,7 @@
 .green { background: #4caf50; }
 .blue { background: #2196f3; }
 .orange { background: #ff9800; }
-.red { background: #e53935; }
+.red { background: #0b6b2d; }
 
 /* LAYOUT */
 .home-layout {
@@ -52,7 +52,7 @@
 
 .home-chart div {
   width: 25px;
-  background: #e53935;
+  background: #0b6b2d;
   border-radius: 6px;
 }
 

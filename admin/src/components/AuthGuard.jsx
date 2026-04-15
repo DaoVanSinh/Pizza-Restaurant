@@ -27,15 +27,24 @@ export default function AuthGuard({ children, allowedRoles = [] }) {
     return <Navigate to="/login" replace />;
   }
 
-  // 2. Đã đăng nhập nhưng Role bị cấm truy cập -> Đá về root hoặc báo lỗi
+  // 2. Kiểm tra Role
   const userRole = userInfo?.role;
   const normalizedUserRole = userRole?.toUpperCase();
   const normalizedAllowedRoles = allowedRoles.map(r => r.toUpperCase());
 
   if (allowedRoles.length > 0 && !normalizedAllowedRoles.includes(normalizedUserRole)) {
-    console.warn("Truy cập bị từ chối: Role không hợp lệ -", userRole);
-    localStorage.clear();
-    return <Navigate to="/login" replace />;
+    // Nếu là route gốc (allowedRoles gồm nhiều role) thì đá về login
+    // Nếu là route admin-only mà STAFF cố vào → redirect về trang chủ (không logout)
+    const isTopLevel = allowedRoles.some(r => r.toUpperCase() === "ADMIN" && allowedRoles.includes("STAFF"));
+    if (isTopLevel) {
+      // Chưa đăng nhập đúng role cần thiết ở cấp gốc → logout
+      console.warn("Truy cập bị từ chối: Role không hợp lệ -", userRole);
+      localStorage.clear();
+      return <Navigate to="/login" replace />;
+    }
+    // Route con chỉ dành cho ADMIN, STAFF cố vào → về trang chủ (giữ nguyên session)
+    console.warn("STAFF không có quyền truy cập trang này, redirect về /");
+    return <Navigate to="/" replace />;
   }
 
   // 3. Hợp lệ -> Cho phép xem

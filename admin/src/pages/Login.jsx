@@ -30,7 +30,7 @@ export default function Login() {
 
       // Backend trả về: { status: 200, message: "...", data: { token, role, ... } }
       const responseData = res.data.data;
-      
+
       if (!responseData || !responseData.token) {
         console.error("Login Error: Missing data.token in response", res.data);
         toast.error("Lỗi dữ liệu từ Server.");
@@ -39,10 +39,10 @@ export default function Login() {
       }
 
       const { token, role, fullName, ...otherProps } = responseData;
-      
+
       // 1. Lưu JWT mới vào Storage (Dùng 'jwt_token' cho đồng bộ với AuthGuard)
       localStorage.setItem("jwt_token", token);
-      
+
       // 2. Lưu User info kèm Role
       localStorage.setItem("user_info", JSON.stringify({ role, fullName, ...otherProps }));
 
@@ -76,7 +76,7 @@ export default function Login() {
               <Input
                 id="phone"
                 type="text"
-                placeholder="0909090909"
+                placeholder="Vui lòng nhập số điện thoại"
                 className="h-11"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -88,7 +88,7 @@ export default function Login() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••"
+                placeholder="Vui lòng nhập mật khẩu"
                 className="h-11"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

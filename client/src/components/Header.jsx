@@ -1,4 +1,4 @@
-import LogoImg from "../assets/logo.png";
+import LogoImg from "../assets/new_logo.png";
 import AccountIcon from "../assets/account-icon.png";
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import CartIcon from "./CartIcon";
@@ -42,7 +42,7 @@ export default function Header() {
                         <img className="w-[100px]" src={LogoImg} alt="Logo" />
                     </Link>
                     <div className="hidden lg:flex flex-col text-red-600 font-bold italic leading-tight">
-                        <span className="text-3xl">19006066</span>
+                        <span className="text-3xl">0868612345</span>
                         <span className="text-xs uppercase bg-red-600 text-white w-max px-2 tracking-widest">Giao hàng nhanh</span>
                     </div>
                 </div>

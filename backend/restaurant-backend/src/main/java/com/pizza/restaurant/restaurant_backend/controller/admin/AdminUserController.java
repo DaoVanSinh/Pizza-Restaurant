@@ -5,13 +5,11 @@ import com.pizza.restaurant.restaurant_backend.model.User;
 import com.pizza.restaurant.restaurant_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-
 public class AdminUserController implements AdminUserApi {
 
     @Autowired
@@ -19,7 +17,7 @@ public class AdminUserController implements AdminUserApi {
 
     @Override
     public ResponseEntity<List<User>> getAllStaffs() {
-        return ResponseEntity.ok(userService.getStaffs());
+        return ResponseEntity.ok(userService.getStaffsAndAdmins());
     }
 
     @Override
@@ -33,9 +31,17 @@ public class AdminUserController implements AdminUserApi {
 
     @Override
     public ResponseEntity<?> createStaff(User user) {
-        user.setRole("staff"); // Ép kiểu role staff
+        String role = user.getRole();
+        // Cho phép tạo STAFF hoặc ADMIN (quản lý)
+        if (role == null || (!role.equalsIgnoreCase("staff") && !role.equalsIgnoreCase("admin"))) {
+            user.setRole("staff"); // mặc định là staff
+        } else {
+            user.setRole(role.toLowerCase()); // lưu lowercase: "admin" hoặc "staff"
+        }
+
         try {
             User saved = userService.register(user);
+            saved.setPassword(null);
             return ResponseEntity.ok(saved);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -44,8 +50,13 @@ public class AdminUserController implements AdminUserApi {
 
     @Override
     public ResponseEntity<?> deleteUser(Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("Deleted successfully!");
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("Đã vô hiệu hóa tài khoản thành công!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
+
 

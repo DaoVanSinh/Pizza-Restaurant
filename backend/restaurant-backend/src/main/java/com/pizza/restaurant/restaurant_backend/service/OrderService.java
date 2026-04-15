@@ -61,6 +61,7 @@ public class OrderService {
         order.setNote(request.getNote());
         order.setShippingFee(request.getShippingFee() != null ? request.getShippingFee() : java.math.BigDecimal.ZERO);
         order.setDiscountAmount(request.getDiscountAmount() != null ? request.getDiscountAmount() : java.math.BigDecimal.ZERO);
+        order.setVoucherCode(request.getVoucherCode());
 
         order.setStatus("pending");
         order.setTotalPrice(request.getTotalPrice());

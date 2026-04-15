@@ -3,8 +3,11 @@ package com.pizza.restaurant.restaurant_backend.service;
 import com.pizza.restaurant.restaurant_backend.model.User;
 import com.pizza.restaurant.restaurant_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -20,7 +23,14 @@ public class UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email đã được sử dụng!");
         }
-        if (user.getPhone() != null && userRepository.findByPhone(user.getPhone()).isPresent()) {
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            throw new RuntimeException("Tên đăng nhập không được để trống!");
+        }
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new RuntimeException("Tên đăng nhập đã tồn tại!");
+        }
+        if (user.getPhone() != null && !user.getPhone().isEmpty()
+                && userRepository.findByPhone(user.getPhone()).isPresent()) {
             throw new RuntimeException("Số điện thoại đã tồn tại!");
         }
 
@@ -46,11 +56,33 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public List<User> getStaffs() {
-        return userRepository.findByRole("STAFF");
+    /**
+     * Lấy danh sách tất cả nhân viên STAFF & quản lý ADMIN (trừ tài khoản chính - id=1)
+     */
+    public List<User> getStaffsAndAdmins() {
+        List<User> staffs  = userRepository.findByRoleIgnoreCase("staff");
+        List<User> admins  = userRepository.findByRoleIgnoreCase("admin");
+        // Gộp và sắp xếp: admin trên cùng
+        List<User> result = new java.util.ArrayList<>();
+        result.addAll(admins);
+        result.addAll(staffs);
+        return result;
     }
 
+    /**
+     * Xóa user: ưu tiên soft-delete (set deleted_at).
+     * Nếu không thành công do FK constraint, ném RuntimeException có message rõ ràng.
+     */
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        if (id == 1L) {
+            throw new RuntimeException("Không thể vô hiệu hóa tài khoản quản trị viên gốc (Super Admin)!");
+        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + id));
+        // Soft delete: đặt deleted_at để vô hiệu hóa tài khoản
+        user.setDeletedAt(Timestamp.from(Instant.now()));
+        userRepository.save(user);
     }
 }
+

@@ -13,18 +13,19 @@ import java.util.List;
 public interface AdminUserApi {
 
     @Operation(summary = "Lấy danh sách tất cả nhân viên (Staff)")
-    @GetMapping("/staffs")
+    @GetMapping
     ResponseEntity<List<User>> getAllStaffs();
 
     @Operation(summary = "Lấy thông tin một User/Staff theo ID")
     @GetMapping("/{id}")
     ResponseEntity<User> getUserById(@PathVariable Long id);
 
-    @Operation(summary = "Thêm nhân viên mới (Staff)")
-    @PostMapping("/staffs")
+    @Operation(summary = "Thêm nhân viên mới (Staff) - Admin cấp tài khoản")
+    @PostMapping("/register")
     ResponseEntity<?> createStaff(@RequestBody User user);
 
     @Operation(summary = "Xóa người dùng hoặc nhân viên")
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteUser(@PathVariable Long id);
 }
+

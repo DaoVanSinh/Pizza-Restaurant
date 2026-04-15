@@ -37,13 +37,35 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /** Thống kê theo phương thức thanh toán */
     @Query(value = """
-        SELECT p.payment_method, COUNT(*) as cnt, SUM(o.total_price) as revenue
+        SELECT 
+            CASE 
+                WHEN p.payment_method='vnpay' THEN 'vnpay'
+                WHEN p.payment_method='cod' AND o.order_type='DELIVERY' THEN 'cod'
+                ELSE 'cash' 
+            END as method, 
+            COUNT(*) as cnt, 
+            SUM(o.total_price) as revenue
         FROM orders o
         JOIN payments p ON o.payment_id = p.id
         WHERE o.status = 'complete'
-        GROUP BY p.payment_method
+        GROUP BY method
     """, nativeQuery = true)
     List<Object[]> revenueByPaymentMethod();
+
+    /** Báo cáo chốt ca theo từng ngày trong tháng (tách COD/Tiền mặt/VNPay) */
+    @Query(value = """
+        SELECT DAY(o.created_at) as day, 
+               SUM(CASE WHEN p.payment_method='vnpay' THEN o.total_price ELSE 0 END) as vnpay_revenue,
+               SUM(CASE WHEN p.payment_method='cod' AND o.order_type='DELIVERY' THEN o.total_price ELSE 0 END) as cod_revenue,
+               SUM(CASE WHEN p.payment_method='cod' AND o.order_type='PICKUP' THEN o.total_price ELSE 0 END) as cash_revenue,
+               SUM(o.total_price) as total_revenue,
+               COUNT(*) as order_count
+        FROM orders o JOIN payments p ON o.payment_id = p.id
+        WHERE o.status = 'complete' AND YEAR(o.created_at) = :year AND MONTH(o.created_at) = :month
+        GROUP BY DAY(o.created_at)
+        ORDER BY day
+    """, nativeQuery = true)
+    List<Object[]> shiftClosingReport(@Param("year") int year, @Param("month") int month);
 
     /** Thống kê trạng thái đơn hàng */
     @Query(value = """
@@ -66,5 +88,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatusOrderByCreatedAtDesc(String status);
 
     /** Lấy đơn hàng theo User ID */
-    List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<Order> findByUser_IdOrderByCreatedAtDesc(Long userId);
 }

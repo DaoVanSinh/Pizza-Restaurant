@@ -100,7 +100,11 @@ public class JwtAuthFilter implements Filter {
     }
 
     private boolean isForbiddenForUser(String path, String role) {
-        // Admin API → Phai la admin hoac staff
+        // Chỉ ADMIN mới được quản lý tài khoản nhân viên/quản lý
+        if (path.startsWith("/api/v1/admin/users")) {
+            return !"admin".equalsIgnoreCase(role);
+        }
+        // Admin API khác (đơn hàng, sản phẩm, giao dịch...) → cả ADMIN lẫn STAFF được phép
         if (path.startsWith("/api/v1/admin/")) {
             return !("admin".equalsIgnoreCase(role) || "staff".equalsIgnoreCase(role));
         }

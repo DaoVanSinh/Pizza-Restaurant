@@ -293,7 +293,7 @@ export default function EditProduct() {
           </Card>
 
           <Button
-            className="w-full h-12 text-base font-bold gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full h-12 text-base font-bold gap-2 bg-primary hover:bg-primary/90 text-white"
             onClick={handleSave}
             disabled={loading}
           >

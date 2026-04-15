@@ -9,6 +9,7 @@ import com.pizza.restaurant.restaurant_backend.repository.OrderItemRepository;
 import com.pizza.restaurant.restaurant_backend.repository.OrderRepository;
 import com.pizza.restaurant.restaurant_backend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,18 +83,20 @@ public class ClientOrderController implements ClientOrderApi {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<OrderDTO>> getMyOrders(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
         if (userId == null) {
             return ResponseEntity.status(401).build();
         }
         
-        List<Order> userOrders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        List<Order> userOrders = orderRepository.findByUser_IdOrderByCreatedAtDesc(userId);
         List<OrderDTO> dtos = userOrders.stream().map(this::toOrderDTO).collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @Override
+    @Transactional
     public ResponseEntity<OrderDTO> getOrderById(HttpServletRequest request, Long id) {
         Optional<Order> order = orderRepository.findById(id);
         return order.map(o -> ResponseEntity.ok(toOrderDTO(o)))

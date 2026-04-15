@@ -105,7 +105,7 @@ export default function Reports() {
   const [loading,      setLoading]      = useState(true);
 
   // Màu PieChart
-  const PIE_COLORS_PAYMENT = ["#6366f1", "#10b981"];
+  const PIE_COLORS_PAYMENT = ["#6366f1", "#10b981", "#f59e0b"];
   const STATUS_META = {
     pending:   { label: "Chờ xử lý",     color: "#f59e0b" },
     preparing: { label: "Đang chế biến", color: "#3b82f6" },
@@ -124,10 +124,13 @@ export default function Reports() {
     ]).then(([statsRes, topRes, payRes, statusRes]) => {
       setStats(statsRes.data || {});
       setTopProducts(topRes.data || []);
-      setPaymentData((payRes.data || []).map(d => ({
-        ...d,
-        label: d.method === "vnpay" ? "VNPay" : "Tiền mặt",
-      })));
+      setPaymentData((payRes.data || []).map(d => {
+        let label = "Khác";
+        if (d.method === "vnpay") label = "VNPay";
+        else if (d.method === "cod") label = "Ship COD";
+        else if (d.method === "cash") label = "Tiền mặt";
+        return { ...d, label };
+      }));
       setStatusData((statusRes.data || []).map(d => ({
         ...d,
         label: STATUS_META[d.status]?.label || d.status,
@@ -398,7 +401,7 @@ export default function Reports() {
                         <div className="flex items-center gap-2">
                           <div className="w-2.5 h-2.5 rounded-sm" style={{ background: PIE_COLORS_PAYMENT[i] }} />
                           <div className="flex items-center gap-1 text-slate-600">
-                            {d.method === "vnpay" ? <CreditCard className="w-3 h-3" /> : <Banknote className="w-3 h-3" />}
+                            {d.method === "vnpay" ? <CreditCard className="w-3 h-3" /> : (d.method === "cod" ? <Banknote className="w-3 h-3" /> : <DollarSign className="w-3 h-3" />)}
                             {d.label}
                           </div>
                         </div>

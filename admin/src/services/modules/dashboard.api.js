@@ -7,4 +7,5 @@ export const dashboardApi = {
   getTopProducts:    (limit = 10)  => apiClient.get(`/dashboard/top-products?limit=${limit}`),
   getPaymentAnalysis: ()           => apiClient.get("/dashboard/payment-analysis"),
   getOrderStatusDist: ()           => apiClient.get("/dashboard/order-status-dist"),
+  getShiftClosingReport: (year, month) => apiClient.get(`/dashboard/shift-report?year=${year || ""}&month=${month || ""}`),
 };

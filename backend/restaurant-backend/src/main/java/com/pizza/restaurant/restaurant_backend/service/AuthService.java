@@ -60,6 +60,12 @@ public class AuthService {
                     return new RuntimeException("Tài khoản không tồn tại");
                 });
 
+        // ❌ Từ chối tài khoản đã bị vô hiệu hóa (admin xóa)
+        if (user.getDeletedAt() != null) {
+            LogUtil.warn("Login blocked: account disabled — " + request.getIdentifier());
+            throw new RuntimeException("Tài khoản này đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.");
+        }
+
         // ✅ BCrypt verify — an toàn, chống timing attack
         if (!PASSWORD_ENCODER.matches(request.getPassword(), user.getPassword())) {
             LogUtil.error("Login failed: wrong password — " + request.getIdentifier());
@@ -85,7 +91,7 @@ public class AuthService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                null,  // fullName
+                user.getFullName(),  // trả về fullName thực tế
                 null   // avatarUrl
         );
     }

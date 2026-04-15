@@ -1,7 +1,7 @@
 import { apiClient } from "../api";
 
 export const promotionApi = {
-  getPromotions: () => apiClient.get("/promotions"),
-  addPromotion: (data) => apiClient.post("/promotions/add", data),
-  deletePromotion: (id) => apiClient.delete(`/promotions/${id}`),
+  getPromotions: () => apiClient.get("/v1/admin/promotions"),
+  addPromotion: (data) => apiClient.post("/v1/admin/promotions", data),
+  deletePromotion: (id) => apiClient.delete(`/v1/admin/promotions/${id}`),
 };

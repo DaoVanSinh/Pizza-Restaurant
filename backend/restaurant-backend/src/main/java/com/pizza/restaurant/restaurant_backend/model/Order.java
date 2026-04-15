@@ -43,6 +43,9 @@ public class Order {
     @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
+    @Column(name = "voucher_code", length = 50)
+    private String voucherCode;
+
     @Column(nullable = false, columnDefinition = "ENUM('pending', 'preparing', 'ready', 'complete', 'cancel')")
     private String status = "pending";
 

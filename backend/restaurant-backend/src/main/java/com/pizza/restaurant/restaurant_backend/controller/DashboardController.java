@@ -147,4 +147,41 @@ public class DashboardController {
         }
         return result;
     }
+    // ── Báo cáo chốt ca theo ngày ───────────────────────────────────────────────
+    @GetMapping("/shift-report")
+    public List<Map<String, Object>> shiftClosingReport(
+            @RequestParam(defaultValue = "0") int year,
+            @RequestParam(defaultValue = "0") int month) {
+
+        LocalDate now = LocalDate.now();
+        int targetYear  = year  > 0 ? year  : now.getYear();
+        int targetMonth = month > 0 ? month : now.getMonthValue();
+        int daysInMonth = LocalDate.of(targetYear, targetMonth, 1).lengthOfMonth();
+
+        List<Object[]> rows = orderRepository.shiftClosingReport(targetYear, targetMonth);
+        Map<Integer, Map<String, Object>> dayMap = new LinkedHashMap<>();
+        for (int d = 1; d <= daysInMonth; d++) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("day", d);
+            m.put("vnpayRevenue", 0);
+            m.put("codRevenue", 0);
+            m.put("cashRevenue", 0);
+            m.put("totalRevenue", 0);
+            m.put("orders", 0);
+            dayMap.put(d, m);
+        }
+
+        for (Object[] row : rows) {
+            int day = ((Number) row[0]).intValue();
+            if (dayMap.containsKey(day)) {
+                dayMap.get(day).put("vnpayRevenue", row[1] != null ? ((Number) row[1]).longValue() : 0L);
+                dayMap.get(day).put("codRevenue",   row[2] != null ? ((Number) row[2]).longValue() : 0L);
+                dayMap.get(day).put("cashRevenue",  row[3] != null ? ((Number) row[3]).longValue() : 0L);
+                dayMap.get(day).put("totalRevenue", row[4] != null ? ((Number) row[4]).longValue() : 0L);
+                dayMap.get(day).put("orders",       row[5] != null ? ((Number) row[5]).longValue() : 0L);
+            }
+        }
+
+        return new ArrayList<>(dayMap.values());
+    }
 }

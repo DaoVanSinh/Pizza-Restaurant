@@ -11,6 +11,7 @@ public class OrderRequest {
     private String address;
     private BigDecimal shippingFee = BigDecimal.ZERO;
     private BigDecimal discountAmount = BigDecimal.ZERO;
+    private String voucherCode;
     private String paymentMethod;
     private BigDecimal totalPrice;
     private List<OrderItemDto> items;
@@ -63,6 +64,14 @@ public class OrderRequest {
 
     public void setDiscountAmount(BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
     }
 
     public String getAddress() {

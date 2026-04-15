@@ -35,7 +35,7 @@
 
 /* BUTTON */
 .btn {
-  background: #e53935;
+  background: #0b6b2d;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -83,7 +83,7 @@
 }
 
 .save {
-  background: #e53935;
+  background: #0b6b2d;
   color: white;
   border: none;
   padding: 8px 14px;
@@ -162,8 +162,8 @@
 }
 
 .accx-row input:focus {
-  border-color: #e53935;
-  box-shadow: 0 0 0 2px rgba(229,57,53,0.1);
+  border-color: #0b6b2d;
+  box-shadow: 0 0 0 2px rgba(11,107,45,0.1);
 }
 
 /* ACTION */
@@ -174,7 +174,7 @@
 }
 
 .accx-save {
-  background: #e53935;
+  background: #0b6b2d;
   color: white;
   border: none;
   padding: 12px 22px;
