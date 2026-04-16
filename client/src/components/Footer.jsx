@@ -21,7 +21,7 @@ export default function Footer() {
         <NavLink to="/" className="hover:underline">Tuyển dụng</NavLink>
         <h3 className="text-lg font-bold mt-4 mb-2">VĂN PHÒNG ĐẠI DIỆN</h3>
         <p className="text-gray-200">
-          Công ty Cổ phần Pizza Ngon 77 Trần Nhân Tôn, Phường 9, Quận 5, Thành phố Hồ Chí Minh <br/>
+          Công ty Cổ phần Pizza Ngon 38 Phố Viên, Phường Cổ Nhuế 2, Quận Bắc Từ Liêm, Thành phố Hà Nội <br/>
           SĐT: +84 (028) 7308 3377 MST: 0104115527 Cấp lần đầu ngày 17/08/2009
         </p>
       </div>

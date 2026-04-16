@@ -403,8 +403,8 @@ export default function ShoppingCart() {
                                             <option>Thành phố Hà Nội</option>
                                         </select>
                                         <select className="border border-gray-300 rounded-md p-2 text-sm text-gray-600 outline-none focus:ring-1 focus:ring-green-600">
-                                            <option>Quận Cầu Giấy</option>
-                                            <option>Quận Đống Đa</option>
+                                            <option>Quận Bắc Từ Liêm</option>
+                                            <option>Quận Nam Từ Liêm</option>
                                         </select>
                                     </div>
                                     <div className="relative mb-4">

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import BannerImg from "../assets/banner.png";
 import { Link } from "react-router-dom";
 import ProductList from "../components/ProductList";
 import { useProducts } from "../hooks/useProducts";
@@ -22,7 +21,6 @@ const SLUG_TO_ROUTE = {
 };
 
 const BANNERS = [
-  BannerImg, // The original project banner
   "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=2070&auto=format&fit=crop", // Pizza Promo 1
   "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=2069&auto=format&fit=crop", // Pizza Promo 2
   "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2070&auto=format&fit=crop", // Pizza Promo 3

@@ -12,7 +12,7 @@ import { getImg } from "../lib/utils";
 
 export default function Header() {
     const menuItems = [
-        { name: "Khuyến mãi", path: "#", isComingSoon: true },
+        { name: "Trang chủ", path: "/" },
         { name: "Pizza", path: "/pizza" },
         { name: "Gà Ngon Vibe", path: "/chickenvibe" },
         { name: "Nui Bỏ Lò", path: "/baked" },
