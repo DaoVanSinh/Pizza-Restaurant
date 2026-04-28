@@ -86,6 +86,9 @@ public class JwtAuthFilter implements Filter {
     }
 
     private boolean isPublicPath(String path) {
+        // /auth/logout KHÔNG public — cần JWT để biết user nào đăng xuất
+        if (path.equals("/api/v1/auth/logout")) return false;
+
         return path.startsWith("/api/v1/auth/") ||
                path.startsWith("/api/payment/vnpay/") ||
                // Client products: public cho moi nguoi (co hoac khong co ?category=...)

@@ -9,9 +9,9 @@ import com.pizza.restaurant.restaurant_backend.model.User;
 import com.pizza.restaurant.restaurant_backend.security.JwtUtil;
 import com.pizza.restaurant.restaurant_backend.service.AuthService;
 import com.pizza.restaurant.restaurant_backend.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,9 +29,6 @@ public class AuthController implements AuthApi {
 
     @Autowired
     private com.pizza.restaurant.restaurant_backend.service.EmailService emailService;
-
-    @Autowired
-    private com.pizza.restaurant.restaurant_backend.repository.UserRepository userRepository;
 
     @Override
     public ResponseEntity<BaseResponse<AuthResponse>> login(LoginRequest request) {
@@ -54,9 +51,13 @@ public class AuthController implements AuthApi {
             user.setRole("user");
 
             User saved = userService.register(user);
-            String token = jwtUtil.generateToken(saved);
+            String token        = jwtUtil.generateToken(saved);
             String refreshToken = jwtUtil.generateRefreshToken(saved);
-            
+
+            // Lưu hash vào DB (nhất quán với login)
+            saved.setTokens(com.pizza.restaurant.restaurant_backend.security.HashUtil.hashSHA256(refreshToken));
+            userService.save(saved);
+
             AuthResponse response = new AuthResponse(
                     token, refreshToken, saved.getId(), saved.getUsername(),
                     saved.getEmail(), saved.getRole(), null, null
@@ -90,28 +91,24 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<BaseResponse<AuthResponse>> refreshToken(com.pizza.restaurant.restaurant_backend.dto.RefreshTokenRequest request) {
         try {
-            String refreshToken = request.getRefreshToken();
-            
-            if (refreshToken == null || !jwtUtil.validateToken(refreshToken) || !jwtUtil.isRefreshToken(refreshToken)) {
-                throw new RuntimeException("Refresh token không hợp lệ hoặc đã hết hạn.");
-            }
-
-            String email = jwtUtil.extractEmail(refreshToken);
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User không tồn tại"));
-
-            // Generate Token Mới
-            String newToken = jwtUtil.generateToken(user);
-            // Optionally: Sinh cả refresh token mới (tuỳ chiến lược, dùng chung hoặc cuốn xoá)
-            String newRefreshToken = jwtUtil.generateRefreshToken(user);
-
-            AuthResponse response = new AuthResponse(
-                    newToken, newRefreshToken, user.getId(), user.getUsername(),
-                    user.getEmail(), user.getRole(), null, null
-            );
+            AuthResponse response = authService.refreshTokenFromDB(request.getRefreshToken());
             return ResponseEntity.ok(BaseResponse.success(response, "Lấy Access Token mới thành công."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(BaseResponse.error(401, e.getMessage()));
         }
     }
-}
 
+    @Override
+    public ResponseEntity<BaseResponse<String>> logout(HttpServletRequest request) {
+        try {
+            Long userId = (Long) request.getAttribute("userId");
+            if (userId == null) {
+                return ResponseEntity.status(401).body(BaseResponse.error(401, "Không xác định được người dùng."));
+            }
+            authService.logout(userId);
+            return ResponseEntity.ok(BaseResponse.success(null, "Đăng xuất thành công."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(BaseResponse.error(500, e.getMessage()));
+        }
+    }
+}

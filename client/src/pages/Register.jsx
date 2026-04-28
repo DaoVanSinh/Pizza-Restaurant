@@ -43,7 +43,7 @@ export default function Register() {
             toast.success("Đăng ký tài khoản thành công!");
             navigate("/login");
         } catch (err) {
-            toast.error(err.response?.data?.message || err.response?.data || "Lỗi đăng ký");
+            toast.error(err.response?.data?.message || err.response?.data || "Email hoặc số điện thoại đã được sử dụng. Vui lòng thử lại.");
         } finally {
             setIsLoading(false);
         }

@@ -1,12 +1,20 @@
 import { FaUserCircle, FaSignOutAlt, FaShieldAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { authApi } from "../services/modules/auth.api";
 
 export default function ModalAccount() {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("user_info") || "{}");
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      // Gọi backend để xóa refreshToken khỏi DB
+      await authApi.logout();
+    } catch {
+      // Dù server có lỗi vẫn xóa local storage
+    }
+    localStorage.removeItem("jwt_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_info");
     navigate("/login");
   };

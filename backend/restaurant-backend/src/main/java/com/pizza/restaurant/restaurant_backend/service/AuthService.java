@@ -8,6 +8,7 @@ import com.pizza.restaurant.restaurant_backend.model.User;
 import com.pizza.restaurant.restaurant_backend.repository.CartItemRepository;
 import com.pizza.restaurant.restaurant_backend.repository.CartRepository;
 import com.pizza.restaurant.restaurant_backend.repository.UserRepository;
+import com.pizza.restaurant.restaurant_backend.security.HashUtil;
 import com.pizza.restaurant.restaurant_backend.security.JwtUtil;
 import com.pizza.restaurant.restaurant_backend.utils.LogUtil;
 import jakarta.transaction.Transactional;
@@ -60,13 +61,13 @@ public class AuthService {
                     return new RuntimeException("Tài khoản không tồn tại");
                 });
 
-        // ❌ Từ chối tài khoản đã bị vô hiệu hóa (admin xóa)
+        //  Từ chối tài khoản đã bị vô hiệu hóa (admin xóa)
         if (user.getDeletedAt() != null) {
             LogUtil.warn("Login blocked: account disabled — " + request.getIdentifier());
             throw new RuntimeException("Tài khoản này đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.");
         }
 
-        // ✅ BCrypt verify — an toàn, chống timing attack
+        //  BCrypt verify — an toàn, chống timing attack
         if (!PASSWORD_ENCODER.matches(request.getPassword(), user.getPassword())) {
             LogUtil.error("Login failed: wrong password — " + request.getIdentifier());
             throw new RuntimeException("Sai mật khẩu");
@@ -77,11 +78,13 @@ public class AuthService {
             mergeCart(user, request.getGuestCartId());
         }
 
-        // ✅ JWT thật
+        //  JWT thật
         String token = jwtUtil.generateToken(user);
-        
-        // ✅ Refresh Token
+
+        //  Refresh Token — sinh mới và lưu hash vào DB
         String refreshToken = jwtUtil.generateRefreshToken(user);
+        user.setTokens(HashUtil.hashSHA256(refreshToken));
+        userRepository.save(user);
 
         LogUtil.info("User '" + user.getUsername() + "' logged in.");
         return new AuthResponse(
@@ -91,8 +94,8 @@ public class AuthService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                user.getFullName(),  // trả về fullName thực tế
-                null   // avatarUrl
+                user.getFullName(),
+                null
         );
     }
 
@@ -133,6 +136,50 @@ public class AuthService {
 
         cartRepository.delete(guestCart);
         LogUtil.info("Merged guest cart [" + guestCartId + "] → user cart [" + userCart.getId() + "]");
+    }
+
+    // ─── Logout ──────────────────────────────────────────────────────
+    @Transactional
+    public void logout(Long userId) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setTokens(null);
+            userRepository.save(user);
+            LogUtil.info("User '" + user.getUsername() + "' logged out — token revoked.");
+        });
+    }
+
+    // ─── Refresh Token từ DB ─────────────────────────────────────────
+    @Transactional
+    public AuthResponse refreshTokenFromDB(String refreshToken) {
+        // 1. Validate chữ ký & hạn dùng của JWT
+        if (!jwtUtil.validateToken(refreshToken) || !jwtUtil.isRefreshToken(refreshToken)) {
+            throw new RuntimeException("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        }
+
+        // 2. Lấy user theo email từ token
+        String email = jwtUtil.extractEmail(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại."));
+
+        // 3. Kiểm tra hash trong DB — bảo vệ chống token bị thu hồi (logout)
+        String hashedIncoming = HashUtil.hashSHA256(refreshToken);
+        if (user.getTokens() == null || !user.getTokens().equals(hashedIncoming)) {
+            throw new RuntimeException("Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.");
+        }
+
+        // 4. Token Rotation — sinh cặp token mới, lưu hash mới vào DB
+        String newAccessToken  = jwtUtil.generateToken(user);
+        String newRefreshToken = jwtUtil.generateRefreshToken(user);
+        user.setTokens(HashUtil.hashSHA256(newRefreshToken));
+        userRepository.save(user);
+
+        LogUtil.info("Refresh token rotated for user '" + user.getUsername() + "'.");
+        return new AuthResponse(
+                newAccessToken, newRefreshToken,
+                user.getId(), user.getUsername(),
+                user.getEmail(), user.getRole(),
+                user.getFullName(), null
+        );
     }
 
     // ─── Quên Mật Khẩu (Forgot Password) ────────────────────────────

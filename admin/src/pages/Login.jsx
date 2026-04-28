@@ -28,30 +28,27 @@ export default function Login() {
         password,
       });
 
-      // Backend trả về: { status: 200, message: "...", data: { token, role, ... } }
       const responseData = res.data.data;
 
       if (!responseData || !responseData.token) {
-        console.error("Login Error: Missing data.token in response", res.data);
-        toast.error("Lỗi dữ liệu từ Server.");
+        toast.error("Dữ liệu đăng nhập không hợp lệ. Vui lòng thử lại.");
         setLoading(false);
         return;
       }
 
-      const { token, role, fullName, ...otherProps } = responseData;
+      const { token, refreshToken, role, fullName, ...otherProps } = responseData;
 
-      // 1. Lưu JWT mới vào Storage (Dùng 'jwt_token' cho đồng bộ với AuthGuard)
+      // 1. Lưu JWT vào Storage
       localStorage.setItem("jwt_token", token);
-
-      // 2. Lưu User info kèm Role
+      // 2. Lưu Refresh Token
+      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
+      // 3. Lưu User info kèm Role
       localStorage.setItem("user_info", JSON.stringify({ role, fullName, ...otherProps }));
 
-      // 3. Đá vào Admin Dashboard
       toast.success("Đăng nhập thành công!");
       navigate("/");
     } catch (err) {
-      console.error("Login Fail:", err);
-      toast.error("Sai số điện thoại hoặc mật khẩu (401)");
+      toast.error(err.response?.data?.message || "Điện thoại hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại.");
     } finally {
       setLoading(false);
     }

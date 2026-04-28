@@ -76,7 +76,7 @@ export default function AccountProfile() {
       
       setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-      toast.error("Lỗi tải ảnh đại diện!");
+      toast.error("Không thể tải ảnh lên. Vui lòng kiểm tra định dạng (JPG, PNG, WEBP) và kích thước tối đa 2MB.");
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ export default function AccountProfile() {
       toast.success("Cập nhật thông tin thành công!");
       setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-      toast.error("Lỗi cập nhật thông tin!");
+      toast.error(err.response?.data?.message || "Cập nhật thất bại. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import com.pizza.restaurant.restaurant_backend.dto.LoginRequest;
 import com.pizza.restaurant.restaurant_backend.dto.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ public interface AuthApi {
     @Operation(summary = "Đăng ký")
     @PostMapping("/register")
     ResponseEntity<BaseResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request);
+
     @Operation(summary = "Quên mật khẩu", description = "Gửi link khôi phục mật khẩu vào email")
     @PostMapping("/forgot-password")
     ResponseEntity<BaseResponse<String>> forgotPassword(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.ForgotPasswordRequest request);
@@ -34,4 +36,8 @@ public interface AuthApi {
     @Operation(summary = "Làm mới Access Token", description = "Dùng Refresh Token để đổi lấy Access Token mới")
     @PostMapping("/refresh-token")
     ResponseEntity<BaseResponse<AuthResponse>> refreshToken(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.RefreshTokenRequest request);
+
+    @Operation(summary = "Đăng xuất", description = "Hủy bỏ Refresh Token trong DB — đăng xuất thật sự")
+    @PostMapping("/logout")
+    ResponseEntity<BaseResponse<String>> logout(HttpServletRequest request);
 }

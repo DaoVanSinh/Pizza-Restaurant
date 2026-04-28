@@ -84,5 +84,10 @@ public class UserService {
         user.setDeletedAt(Timestamp.from(Instant.now()));
         userRepository.save(user);
     }
+
+    /** Lưu thay đổi bất kỳ của user entity */
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }
 

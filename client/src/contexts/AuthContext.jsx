@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }) => {
             phone: profileData.user?.phone || userData.phone,
           };
           localStorage.setItem('user', JSON.stringify(userData));
-        } catch (err) {
-          console.error("Could not sync profile background", err);
+        } catch {
+          // Lỗi sync profile ở background — giữ nguyên dữ liệu cũ
         }
         setUser(userData);
       }
@@ -42,9 +42,10 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     const res = await authApi.login({ identifier: username, password });
     if (res.data && res.data.data) {
-      const { token, ...baseUserData } = res.data.data;
+      const { token, refreshToken, ...baseUserData } = res.data.data;
       localStorage.setItem('token', token);
-      
+      if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+
       let userData = { ...baseUserData };
       try {
         // Đồng bộ dữ liệu Profile ngay sau khi login
@@ -57,8 +58,8 @@ export const AuthProvider = ({ children }) => {
            avatarUrl: profileData.avatar || profileData.avatarUrl,
            phone: profileData.user?.phone || userData.phone,
         };
-      } catch (err) {
-        console.error("Login sync profile error", err);
+      } catch {
+        // Sync profile thất bại — dùng dữ liệu từ login response
       }
 
       localStorage.setItem('user', JSON.stringify(userData));
@@ -66,11 +67,18 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return userData;
     }
-    throw new Error('Lỗi dữ liệu đăng nhập');
+    throw new Error('Đăng nhập thất bại. Vui lòng thử lại.');
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Gọi backend để xóa refreshToken khỏi DB
+      await authApi.logout();
+    } catch {
+      // Dù server có lỗi vẫn xóa local storage
+    }
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
@@ -92,3 +100,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
