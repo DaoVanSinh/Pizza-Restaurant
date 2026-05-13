@@ -10,6 +10,7 @@ import com.pizza.restaurant.restaurant_backend.service.AuthService;
 import com.pizza.restaurant.restaurant_backend.utils.LogUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -20,24 +21,32 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final VariantRepository variantRepository;
+    private final Environment environment;
 
-    @Value("${DEFAULT_ADMIN_EMAIL:admin@pizza.com}")
+    @Value("${app.default.admin.email}")
     private String adminEmail;
 
-    @Value("${DEFAULT_ADMIN_PHONE:0909090909}")
+    @Value("${app.default.admin.phone}")
     private String adminPhone;
 
-    @Value("${DEFAULT_ADMIN_PASSWORD:admin}")
+    @Value("${app.default.admin.password}")
     private String adminPassword;
 
-    public DataInitializer(UserRepository userRepository, CategoryRepository categoryRepository, VariantRepository variantRepository) {
+    public DataInitializer(UserRepository userRepository, CategoryRepository categoryRepository, VariantRepository variantRepository, Environment environment) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.variantRepository = variantRepository;
+        this.environment = environment;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        boolean prod = java.util.Arrays.stream(environment.getActiveProfiles())
+                .anyMatch(profile -> "prod".equalsIgnoreCase(profile));
+        if (prod && (adminPassword == null || adminPassword.length() < 12)) {
+            throw new IllegalStateException("Default admin password must be at least 12 characters.");
+        }
+
         Optional<User> adminOpt = userRepository.findByUsername("Super Admin");
         
         if (adminOpt.isEmpty()) {

@@ -1,37 +1,61 @@
 package com.pizza.restaurant.restaurant_backend.config;
 
 import com.pizza.restaurant.restaurant_backend.security.RoleInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.nio.file.Path;
+import java.util.Arrays;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private RoleInterceptor roleInterceptor;
+    private final RoleInterceptor roleInterceptor;
+    private final String allowedOrigins;
+    private final String uploadDir;
+
+    public WebConfig(RoleInterceptor roleInterceptor,
+                     @Value("${app.cors.allowed-origins}") String allowedOrigins,
+                     @Value("${app.upload.dir:uploads}") String uploadDir) {
+        this.roleInterceptor = roleInterceptor;
+        this.allowedOrigins = allowedOrigins;
+        this.uploadDir = uploadDir;
+    }
 
     @Override
-    public void addInterceptors(@org.springframework.lang.NonNull InterceptorRegistry registry) {
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(roleInterceptor)
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/v1/images/**"); // Cho phép xem ảnh không cần token (hoặc tùy bạn)
+                .excludePathPatterns("/api/v1/images/**");
     }
 
     @Override
-    public void addResourceHandlers(@org.springframework.lang.NonNull org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+        String location = Path.of(uploadDir).toAbsolutePath().normalize().toUri().toString();
         registry.addResourceHandler("/api/v1/images/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations(location);
     }
 
     @Override
-    public void addCorsMappings(@org.springframework.lang.NonNull org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*") // Better than allowedOrigins("*") for credentials
+                .allowedOrigins(parseOrigins())
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                .allowedHeaders("*")
+                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
                 .allowCredentials(true)
                 .maxAge(3600);
+    }
+
+    private String[] parseOrigins() {
+        return Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty() && !"*".equals(origin))
+                .distinct()
+                .toArray(String[]::new);
     }
 }

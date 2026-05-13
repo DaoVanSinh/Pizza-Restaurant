@@ -46,6 +46,8 @@ public class AdminProductController implements AdminProductApi {
             try {
                 String imageKey = fileStorageService.saveFile(image, "products");
                 product.setImageUrl(imageKey);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
             } catch (java.io.IOException e) {
                 return ResponseEntity.internalServerError().build();
             }
@@ -60,6 +62,8 @@ public class AdminProductController implements AdminProductApi {
             try {
                 String imageKey = fileStorageService.saveFile(image, "products");
                 product.setImageUrl(imageKey);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
             } catch (java.io.IOException e) {
                 return ResponseEntity.internalServerError().build();
             }

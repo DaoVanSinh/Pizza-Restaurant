@@ -1,5 +1,7 @@
 package com.pizza.restaurant.restaurant_backend.security;
 
+import com.pizza.restaurant.restaurant_backend.model.User;
+import com.pizza.restaurant.restaurant_backend.repository.UserRepository;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,16 +9,27 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class JwtAuthFilter implements Filter {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final String allowedOrigins;
+
+    public JwtAuthFilter(JwtUtil jwtUtil,
+                         UserRepository userRepository,
+                         @Value("${app.cors.allowed-origins}") String allowedOrigins) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.allowedOrigins = allowedOrigins;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -25,92 +38,131 @@ public class JwtAuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // ── Luon gan CORS headers (ke ca khi tra loi 401/403) ─────────────────
-        String origin = httpRequest.getHeader("Origin");
-        if (origin != null) {
-            httpResponse.setHeader("Access-Control-Allow-Origin", origin);
-            httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
-            httpResponse.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
-            httpResponse.setHeader("Vary", "Origin");
-        }
+        applySecurityHeaders(httpResponse);
+        applyCorsHeaders(httpRequest, httpResponse);
 
-        String path = httpRequest.getRequestURI();
-
-        // Xu ly CORS Preflight request
         if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
             httpResponse.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
-        // Bo qua check JWT voi cac duong dan public
-        if (isPublicPath(path)) {
+        String path = httpRequest.getRequestURI();
+        String method = httpRequest.getMethod();
+
+        if (isPublicPath(method, path)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Kiem tra Header Authorization
         String authHeader = httpRequest.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpResponse.setContentType("application/json;charset=UTF-8");
-            httpResponse.getWriter().write("{\"error\": \"Unauthorized: Missing or invalid token\"}");
+            writeError(httpResponse, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
         String token = authHeader.substring(7);
-
-        // Validate Token
         if (!jwtUtil.validateToken(token)) {
-            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpResponse.setContentType("application/json;charset=UTF-8");
-            httpResponse.getWriter().write("{\"error\": \"Unauthorized: Token expired or invalid\"}");
+            writeError(httpResponse, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
-        // Lay thong tin tu token va gan vao request attributes
-        String role = jwtUtil.extractRole(token);
-        httpRequest.setAttribute("userEmail", jwtUtil.extractEmail(token));
-        httpRequest.setAttribute("userId",    jwtUtil.extractUserId(token));
-        httpRequest.setAttribute("userRole",  role);
+        Long tokenUserId = jwtUtil.extractUserId(token);
+        Optional<User> userOpt = tokenUserId != null
+                ? userRepository.findById(tokenUserId)
+                : userRepository.findByEmail(jwtUtil.extractEmail(token));
 
-        // Chan quyen neu vao trang yeu cau admin nhung role la user
-        if (isForbiddenForUser(path, role)) {
-            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            httpResponse.setContentType("application/json;charset=UTF-8");
-            httpResponse.getWriter().write("{\"error\": \"Forbidden: You don't have access privilege\"}");
+        if (userOpt.isEmpty() || userOpt.get().getDeletedAt() != null) {
+            writeError(httpResponse, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return;
+        }
+
+        User user = userOpt.get();
+        String role = user.getRole();
+
+        httpRequest.setAttribute("userEmail", user.getEmail());
+        httpRequest.setAttribute("userId", user.getId());
+        httpRequest.setAttribute("userRole", role);
+
+        if (!hasRequiredRole(method, path, role)) {
+            writeError(httpResponse, HttpServletResponse.SC_FORBIDDEN, "Forbidden");
             return;
         }
 
         chain.doFilter(request, response);
     }
 
-    private boolean isPublicPath(String path) {
-        // /auth/logout KHÔNG public — cần JWT để biết user nào đăng xuất
-        if (path.equals("/api/v1/auth/logout")) return false;
+    private boolean isPublicPath(String method, String path) {
+        if ("POST".equalsIgnoreCase(method) && (
+                path.equals("/api/v1/auth/login") ||
+                path.equals("/api/v1/auth/register") ||
+                path.equals("/api/v1/auth/forgot-password") ||
+                path.equals("/api/v1/auth/reset-password") ||
+                path.equals("/api/v1/auth/refresh-token"))) {
+            return true;
+        }
 
-        return path.startsWith("/api/v1/auth/") ||
-               path.startsWith("/api/payment/vnpay/") ||
-               // Client products: public cho moi nguoi (co hoac khong co ?category=...)
-               path.startsWith("/api/v1/client/products") ||
-               path.startsWith("/api/v1/categories") ||
-               path.startsWith("/api/v1/variants") ||
-               // Dashboard stats: read-only, khong can auth
-               path.equals("/api/dashboard/stats") ||
-               path.startsWith("/api/v1/images/") ||
-               path.startsWith("/swagger-ui") ||
-               path.startsWith("/v3/api-docs");
+        return ("GET".equalsIgnoreCase(method) && (
+                    path.startsWith("/api/v1/client/products") ||
+                    path.startsWith("/api/v1/categories") ||
+                    path.startsWith("/api/v1/variants") ||
+                    path.startsWith("/api/v1/images/") ||
+                    path.equals("/api/v1/payment/vnpay/return") ||
+                    path.startsWith("/swagger-ui") ||
+                    path.startsWith("/v3/api-docs")
+                ));
     }
 
-    private boolean isForbiddenForUser(String path, String role) {
-        // Chỉ ADMIN mới được quản lý tài khoản nhân viên/quản lý
+    private boolean hasRequiredRole(String method, String path, String role) {
         if (path.startsWith("/api/v1/admin/users")) {
-            return !"admin".equalsIgnoreCase(role);
+            return hasAnyRole(role, "admin");
         }
-        // Admin API khác (đơn hàng, sản phẩm, giao dịch...) → cả ADMIN lẫn STAFF được phép
-        if (path.startsWith("/api/v1/admin/")) {
-            return !("admin".equalsIgnoreCase(role) || "staff".equalsIgnoreCase(role));
+
+        if (path.startsWith("/api/v1/admin/") || path.startsWith("/api/dashboard/")) {
+            return hasAnyRole(role, "admin", "staff");
         }
-        return false;
+
+        if (path.startsWith("/api/v1/categories") && !"GET".equalsIgnoreCase(method)) {
+            return hasAnyRole(role, "admin", "staff");
+        }
+
+        return true;
+    }
+
+    private boolean hasAnyRole(String role, String... allowed) {
+        return role != null && Arrays.stream(allowed).anyMatch(allowedRole -> allowedRole.equalsIgnoreCase(role));
+    }
+
+    private void applyCorsHeaders(HttpServletRequest request, HttpServletResponse response) {
+        String origin = request.getHeader("Origin");
+        if (origin == null || !isAllowedOrigin(origin)) {
+            return;
+        }
+
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With");
+        response.setHeader("Vary", "Origin");
+    }
+
+    private boolean isAllowedOrigin(String origin) {
+        return Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty() && !"*".equals(value))
+                .anyMatch(origin::equals);
+    }
+
+    private void applySecurityHeaders(HttpServletResponse response) {
+        response.setHeader("X-Content-Type-Options", "nosniff");
+        response.setHeader("X-Frame-Options", "DENY");
+        response.setHeader("Referrer-Policy", "no-referrer");
+        response.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+        response.setHeader("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
+    }
+
+    private void writeError(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"status\":" + status + ",\"message\":\"" + message + "\"}");
     }
 }

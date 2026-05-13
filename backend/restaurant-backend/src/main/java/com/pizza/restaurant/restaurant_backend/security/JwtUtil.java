@@ -5,90 +5,74 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-/**
- * JWT Utility
- * ─────────────────────────────────────────────
- * Algorithm  : HMAC-SHA256 (HS256)
- * Secret key : từ .env → JWT_SECRET
- * Subject    : email của user
- * Claims     : userId, username, role
- * Expiry     : 24 giờ (configurable)
- */
 @Component
 public class JwtUtil {
 
+    public static final long ACCESS_TOKEN_EXPIRY_MS = 15 * 60 * 1000L;
+    public static final long REFRESH_TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000L;
+    public static final long RESET_TOKEN_EXPIRY_MS = 15 * 60 * 1000L;
+
     @Value("${JWT_SECRET}")
-    private String SECRET_STRING;
+    private String secretString;
 
-    /** 24 giờ tính bằng ms */
-    private static final long ACCESS_TOKEN_EXPIRY  = 24 * 60 * 60 * 1000L;
-
-    /** 15 phút tính bằng ms — dùng cho reset-password link */
-    private static final long RESET_TOKEN_EXPIRY   = 15 * 60 * 1000L;
-
-    // ─── Key ────────────────────────────────────────────────────────
-    private SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
+    @PostConstruct
+    void validateSecret() {
+        if (secretString == null || secretString.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET must be at least 32 bytes for HS256.");
+        }
     }
 
-    // ─── Generate ───────────────────────────────────────────────────
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+    }
 
-    /**
-     * Sinh Access Token cho user đăng nhập thành công.
-     * Ký bằng HMAC-SHA256 (HS256).
-     */
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId",   user.getId());
+        claims.put("userId", user.getId());
         claims.put("username", user.getUsername());
-        claims.put("role",     user.getRole());
+        claims.put("role", user.getRole());
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(user.getEmail())          // subject = email
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY_MS))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    /**
-     * Sinh Refresh Token (7 ngày).
-     * Claim "purpose" = "refresh"
-     */
     public String generateRefreshToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("purpose", "refresh")
+                .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L))
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRY_MS))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    /**
-     * Sinh Reset-Password Token (15 phút).
-     * Claim "purpose" = "reset_password" để phân biệt với access token.
-     */
     public String generateResetToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("purpose", "reset_password")
+                .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + RESET_TOKEN_EXPIRY))
+                .setExpiration(new Date(System.currentTimeMillis() + RESET_TOKEN_EXPIRY_MS))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-
-    // ─── Extract ────────────────────────────────────────────────────
 
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
@@ -107,9 +91,10 @@ public class JwtUtil {
         return (String) getClaims(token).get("role");
     }
 
-    // ─── Validate ───────────────────────────────────────────────────
+    public Date extractExpiration(String token) {
+        return getClaims(token).getExpiration();
+    }
 
-    /** Token hợp lệ và chưa hết hạn */
     public boolean validateToken(String token) {
         try {
             return !getClaims(token).getExpiration().before(new Date());
@@ -118,7 +103,6 @@ public class JwtUtil {
         }
     }
 
-    /** Kiểm tra token này có phải Reset Token không */
     public boolean isResetToken(String token) {
         try {
             return "reset_password".equals(getClaims(token).get("purpose"));
@@ -127,7 +111,6 @@ public class JwtUtil {
         }
     }
 
-    /** Kiểm tra token này có phải Refresh Token không */
     public boolean isRefreshToken(String token) {
         try {
             return "refresh".equals(getClaims(token).get("purpose"));
@@ -136,7 +119,6 @@ public class JwtUtil {
         }
     }
 
-    // ─── Internal ───────────────────────────────────────────────────
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSecretKey())

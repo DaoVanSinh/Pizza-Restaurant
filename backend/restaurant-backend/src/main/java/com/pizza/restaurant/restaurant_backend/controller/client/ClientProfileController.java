@@ -46,6 +46,8 @@ public class ClientProfileController implements ClientProfileApi {
                 String imageKey = fileStorageService.saveFile(image, "avatars");
                 profile.setAvatar(imageKey);
                 return ResponseEntity.ok(profileRepository.save(profile));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
             } catch (java.io.IOException e) {
                 return ResponseEntity.status(500).build();
             }
@@ -100,12 +102,6 @@ public class ClientProfileController implements ClientProfileApi {
         if (payload.containsKey("address") && payload.get("address") != null) {
             profile.setAddress(payload.get("address").toString());
         }
-        if (payload.containsKey("avatarUrl") && payload.get("avatarUrl") != null) {
-            profile.setAvatar(payload.get("avatarUrl").toString());
-        } else if (payload.containsKey("avatar") && payload.get("avatar") != null) {
-            profile.setAvatar(payload.get("avatar").toString());
-        }
-        
         // Handle phone (it could be direct "phone" or nested inside "user": {"phone": "..."} depending on payload
         String newPhone = null;
         if (payload.containsKey("phone") && payload.get("phone") != null) {

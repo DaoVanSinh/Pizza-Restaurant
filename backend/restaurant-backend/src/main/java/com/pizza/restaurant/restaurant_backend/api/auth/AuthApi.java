@@ -14,30 +14,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/api/v1/auth")
-@Tag(name = "Auth", description = "API Xác thực người dùng (Public)")
+@Tag(name = "Auth", description = "Authentication API")
 public interface AuthApi {
 
-    @Operation(summary = "Đăng nhập")
+    @Operation(summary = "Login")
     @PostMapping("/login")
-    ResponseEntity<BaseResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request);
+    ResponseEntity<BaseResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest);
 
-    @Operation(summary = "Đăng ký")
+    @Operation(summary = "Register")
     @PostMapping("/register")
     ResponseEntity<BaseResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request);
 
-    @Operation(summary = "Quên mật khẩu", description = "Gửi link khôi phục mật khẩu vào email")
+    @Operation(summary = "Forgot password")
     @PostMapping("/forgot-password")
-    ResponseEntity<BaseResponse<String>> forgotPassword(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.ForgotPasswordRequest request);
+    ResponseEntity<BaseResponse<String>> forgotPassword(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.ForgotPasswordRequest request, HttpServletRequest httpRequest);
 
-    @Operation(summary = "Đặt lại mật khẩu", description = "Sử dụng token được gửi từ email để đặt lại mật khẩu mới")
+    @Operation(summary = "Reset password")
     @PostMapping("/reset-password")
     ResponseEntity<BaseResponse<String>> resetPassword(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.ResetPasswordRequest request);
 
-    @Operation(summary = "Làm mới Access Token", description = "Dùng Refresh Token để đổi lấy Access Token mới")
+    @Operation(summary = "Refresh access token")
     @PostMapping("/refresh-token")
     ResponseEntity<BaseResponse<AuthResponse>> refreshToken(@Valid @RequestBody com.pizza.restaurant.restaurant_backend.dto.RefreshTokenRequest request);
 
-    @Operation(summary = "Đăng xuất", description = "Hủy bỏ Refresh Token trong DB — đăng xuất thật sự")
+    @Operation(summary = "Logout")
     @PostMapping("/logout")
     ResponseEntity<BaseResponse<String>> logout(HttpServletRequest request);
 }

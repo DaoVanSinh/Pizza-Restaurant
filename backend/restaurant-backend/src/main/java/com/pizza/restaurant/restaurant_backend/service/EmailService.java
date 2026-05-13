@@ -2,8 +2,7 @@ package com.pizza.restaurant.restaurant_backend.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -13,40 +12,42 @@ import org.thymeleaf.context.Context;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
+    private final String clientUrl;
 
-    @Autowired
-    private TemplateEngine templateEngine;
+    public EmailService(JavaMailSender mailSender,
+                        TemplateEngine templateEngine,
+                        @Value("${app.client.url}") String clientUrl) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+        this.clientUrl = stripTrailingSlash(clientUrl);
+    }
 
-    /**
-     * Gửi Link Reset Pass bằng HTML
-     */
-    public void sendResetPasswordMail(String toEmail, String name, String token, String origin) {
+    public void sendResetPasswordMail(String toEmail, String name, String token) {
         try {
-            // Chuẩn bị biến nội dung nhét vào HTML
             Context context = new Context();
-            context.setVariable("name", name != null ? name : "Quý khách");
+            context.setVariable("name", name != null ? name : "Quy khach");
+            context.setVariable("resetLink", clientUrl + "/reset-password?token=" + token);
 
-            // Mặc định đọc thẳng url từ HTTP Request Header nếu DTO truyền origin rỗng
-            String baseUrl = (origin != null && !origin.isEmpty()) ? origin : com.pizza.restaurant.restaurant_backend.utils.RequestUtil.getClientOrigin();
-            String resetLink = baseUrl + "/reset-password?token=" + token;
-            context.setVariable("resetLink", resetLink);
-
-            // Giao cho Thymeleaf render file reset-password.html
             String htmlContent = templateEngine.process("reset-password", context);
 
-            // Bắt đầu nhúng Mail nội dung HTML
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
             helper.setTo(toEmail);
-            helper.setSubject("Yêu cầu khôi phục mật khẩu - Nhà hàng Pizza");
+            helper.setSubject("Yeu cau khoi phuc mat khau - Nha hang Pizza");
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("Có lỗi khi gửi thư khôi phục: " + e.getMessage());
+            throw new RuntimeException("Could not send reset password email.", e);
         }
+    }
+
+    private String stripTrailingSlash(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        return value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
     }
 }

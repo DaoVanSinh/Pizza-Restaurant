@@ -33,6 +33,8 @@ public class AdminCategoryController {
             try {
                 String imageKey = fileStorageService.saveFile(image, "categories");
                 category.setImageKey(imageKey);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
             } catch (java.io.IOException e) {
                 return ResponseEntity.internalServerError().build();
             }
@@ -59,6 +61,8 @@ public class AdminCategoryController {
             try {
                 String imageKey = fileStorageService.saveFile(image, "categories");
                 category.setImageKey(imageKey);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().build();
             } catch (java.io.IOException e) {
                 return ResponseEntity.status(500).build();
             }
