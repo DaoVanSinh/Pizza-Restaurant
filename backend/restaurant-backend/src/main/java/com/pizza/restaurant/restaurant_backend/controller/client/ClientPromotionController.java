@@ -16,7 +16,7 @@ public class ClientPromotionController implements ClientPromotionApi {
     @Override
     public ResponseEntity<?> checkPromotion(String code) {
         try {
-            Promotion promotion = promotionService.validateCode(code);
+            Promotion promotion = promotionService.validateCodeForPreview(code);
             return ResponseEntity.ok(promotion);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

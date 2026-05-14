@@ -1,22 +1,14 @@
 package com.pizza.restaurant.restaurant_backend.service;
 
-import com.pizza.restaurant.restaurant_backend.model.Order;
-import com.pizza.restaurant.restaurant_backend.model.Transaction;
-import com.pizza.restaurant.restaurant_backend.repository.OrderRepository;
-import com.pizza.restaurant.restaurant_backend.repository.TransactionRepository;
+import com.pizza.restaurant.restaurant_backend.dto.OrderRequest;
+import com.pizza.restaurant.restaurant_backend.dto.VoucherResult;
+import com.pizza.restaurant.restaurant_backend.model.*;
+import com.pizza.restaurant.restaurant_backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-
-import com.pizza.restaurant.restaurant_backend.dto.OrderRequest;
-import com.pizza.restaurant.restaurant_backend.model.Payment;
-import com.pizza.restaurant.restaurant_backend.model.Product;
-import com.pizza.restaurant.restaurant_backend.model.OrderItem;
-import com.pizza.restaurant.restaurant_backend.model.User;
-import com.pizza.restaurant.restaurant_backend.repository.OrderItemRepository;
-import com.pizza.restaurant.restaurant_backend.repository.PaymentRepository;
-import com.pizza.restaurant.restaurant_backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 public class OrderService {
@@ -35,6 +27,9 @@ public class OrderService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private PromotionService promotionService;
 
     @Transactional
     public Order createOrder(User user, OrderRequest request) {
@@ -59,12 +54,33 @@ public class OrderService {
         order.setRecipientName(request.getRecipientName());
         order.setRecipientPhone(request.getRecipientPhone());
         order.setNote(request.getNote());
-        order.setShippingFee(request.getShippingFee() != null ? request.getShippingFee() : java.math.BigDecimal.ZERO);
-        order.setDiscountAmount(request.getDiscountAmount() != null ? request.getDiscountAmount() : java.math.BigDecimal.ZERO);
-        order.setVoucherCode(request.getVoucherCode());
+        order.setShippingFee(request.getShippingFee() != null ? request.getShippingFee() : BigDecimal.ZERO);
+
+        // === VALIDATE & TÍNH GIÁ SERVER-SIDE (không tin client) ===
+        // Tính tổng tiền hàng từ items
+        BigDecimal itemsTotal = BigDecimal.ZERO;
+        for (OrderRequest.OrderItemDto item : request.getItems()) {
+            BigDecimal price = item.getPrice() != null ? item.getPrice() : BigDecimal.ZERO;
+            itemsTotal = itemsTotal.add(price.multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+
+        // Validate & apply voucher
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        Promotion appliedPromo = null;
+        if (request.getVoucherCode() != null && !request.getVoucherCode().trim().isEmpty()) {
+            VoucherResult result = promotionService.validateAndCalculate(
+                    request.getVoucherCode(), user.getId(), itemsTotal);
+            discountAmount = result.getDiscount();
+            appliedPromo = result.getPromotion();
+            order.setVoucherCode(appliedPromo.getCode());
+        }
+        order.setDiscountAmount(discountAmount);
+
+        // Tính totalPrice server-side
+        BigDecimal shippingFee = order.getShippingFee() != null ? order.getShippingFee() : BigDecimal.ZERO;
+        order.setTotalPrice(itemsTotal.add(shippingFee).subtract(discountAmount));
 
         order.setStatus("pending");
-        order.setTotalPrice(request.getTotalPrice());
         order.setPayment(payment);
         Order savedOrder = orderRepository.save(order);
 
@@ -94,6 +110,11 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
+        // 4. Ghi nhận lượt dùng voucher (sau khi order đã save thành công)
+        if (appliedPromo != null) {
+            promotionService.applyVoucher(appliedPromo.getId(), user, savedOrder);
+        }
+
         return savedOrder;
     }
 
@@ -121,6 +142,11 @@ public class OrderService {
             // Thanh toán thất bại → huỷ cả payment lẫn order
             payment.setStatus("cancel");
             order.setStatus("cancel");
+
+            // Hoàn trả lượt dùng voucher
+            if (order.getVoucherCode() != null && !order.getVoucherCode().isEmpty()) {
+                promotionService.rollbackVoucher(orderId);
+            }
         }
 
         paymentRepository.save(payment);

@@ -57,8 +57,31 @@ export default function ShoppingCart() {
         try {
             const res = await promotionApi.checkPromotion(voucherCode);
             const data = res.data;
-            setAppliedVoucher({ code: data.code, percent: data.discountPercent });
-            toast.success(`Mã hợp lệ! Đã giảm ${data.discountPercent}% cho tổng hình thức đặt`);
+
+            // Check đơn tối thiểu tại client (server cũng sẽ check lại)
+            if (data.minOrderValue && baseTotal < data.minOrderValue) {
+                toast.warning(`Đơn hàng cần tối thiểu ${Number(data.minOrderValue).toLocaleString()}đ để dùng mã này`);
+                setApplyingVoucher(false);
+                return;
+            }
+
+            setAppliedVoucher({
+                code: data.code,
+                discountType: data.discountType,
+                discountValue: Number(data.discountValue),
+                maxDiscountAmount: data.maxDiscountAmount ? Number(data.maxDiscountAmount) : null,
+                minOrderValue: data.minOrderValue ? Number(data.minOrderValue) : 0
+            });
+
+            // Toast message mô tả chi tiết
+            let msg = `Mã hợp lệ! `;
+            if (data.discountType === "FIXED") {
+                msg += `Giảm ${Number(data.discountValue).toLocaleString()}đ`;
+            } else {
+                msg += `Giảm ${Number(data.discountValue)}%`;
+                if (data.maxDiscountAmount) msg += ` (tối đa ${Number(data.maxDiscountAmount).toLocaleString()}đ)`;
+            }
+            toast.success(msg);
         } catch (err) {
             toast.error(err?.response?.data || "Mã không hợp lệ hoặc đã hết hạn");
             setAppliedVoucher(null);
@@ -74,7 +97,21 @@ export default function ShoppingCart() {
 
     const baseTotal = getCartTotal();
     const shippingFee = orderType === "DELIVERY" ? 30000 : 0;
-    const discountAmount = appliedVoucher ? (baseTotal * appliedVoucher.percent) / 100 : 0;
+
+    // Tính giảm giá dựa trên loại voucher (preview - server tính lại chính xác)
+    let discountAmount = 0;
+    if (appliedVoucher) {
+        if (appliedVoucher.discountType === "FIXED") {
+            discountAmount = appliedVoucher.discountValue;
+        } else {
+            discountAmount = (baseTotal * appliedVoucher.discountValue) / 100;
+            if (appliedVoucher.maxDiscountAmount && discountAmount > appliedVoucher.maxDiscountAmount) {
+                discountAmount = appliedVoucher.maxDiscountAmount;
+            }
+        }
+        // Không giảm quá tổng đơn
+        if (discountAmount > baseTotal) discountAmount = baseTotal;
+    }
     const finalTotal = baseTotal + shippingFee - discountAmount;
 
     const handleCheckout = async () => {
@@ -330,7 +367,7 @@ export default function ShoppingCart() {
                                             </div>
                                             {appliedVoucher && (
                                                 <div className="flex justify-between text-green-600 border-b pb-4">
-                                                    <span>Giảm giá ({appliedVoucher.percent}%)</span>
+                                                    <span>Giảm giá ({appliedVoucher.discountType === 'FIXED' ? `${appliedVoucher.discountValue.toLocaleString()}đ` : `${appliedVoucher.discountValue}%`})</span>
                                                     <span>-{discountAmount.toLocaleString()}đ</span>
                                                 </div>
                                             )}
@@ -475,7 +512,7 @@ export default function ShoppingCart() {
                                         </div>
                                         {appliedVoucher && (
                                             <div className="flex justify-between text-green-600">
-                                                <span>Giảm giá ({appliedVoucher.percent}%):</span>
+                                                <span>Giảm giá ({appliedVoucher.discountType === 'FIXED' ? `${appliedVoucher.discountValue.toLocaleString()}đ` : `${appliedVoucher.discountValue}%`}):</span>
                                                 <span>-{discountAmount.toLocaleString()}đ</span>
                                             </div>
                                         )}

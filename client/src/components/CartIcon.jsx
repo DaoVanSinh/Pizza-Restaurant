@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../contexts/CartContext";
 
 export default function CartIcon() {
-  const { cart } = useCart();
-  const count = cart.reduce((total, item) => total + (item.quantity || 1), 0);
-  
+  const { getCartCount } = useCart();
+  const count = getCartCount();
+
   return (
     <Link to="/shoppingcart" className="relative flex items-center justify-center text-white hover:text-green-200 transition-colors">
       <div className="relative flex items-center gap-2">
