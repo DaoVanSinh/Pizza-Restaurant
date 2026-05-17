@@ -24,11 +24,12 @@ public class EmailService {
         this.clientUrl = stripTrailingSlash(clientUrl);
     }
 
-    public void sendResetPasswordMail(String toEmail, String name, String token) {
+    public void sendResetPasswordMail(String toEmail, String name, String token, String resetBaseUrl) {
         try {
+            String baseUrl = (resetBaseUrl != null && !resetBaseUrl.isBlank()) ? stripTrailingSlash(resetBaseUrl) : clientUrl;
             Context context = new Context();
             context.setVariable("name", name != null ? name : "Quy khach");
-            context.setVariable("resetLink", clientUrl + "/reset-password?token=" + token);
+            context.setVariable("resetLink", baseUrl + "/reset-password?token=" + token);
 
             String htmlContent = templateEngine.process("reset-password", context);
 

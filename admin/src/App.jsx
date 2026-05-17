@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import AdminLayout from './components/AdminLayout';
 import AuthGuard from './components/AuthGuard';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Report from './pages/Report';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products/Products';
@@ -24,6 +26,8 @@ function App() {
       <Toaster position="top-right" richColors />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Tất cả trang cho cả ADMIN và STAFF */}
         <Route path="/" element={<AuthGuard allowedRoles={["ADMIN", "STAFF"]}><AdminLayout/></AuthGuard>}>

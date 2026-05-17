@@ -162,20 +162,28 @@ public class AuthService {
     }
 
     @Transactional
-    public void processForgotPassword(String email, EmailService emailService) {
+    public void processForgotPassword(String email, EmailService emailService, String resetBaseUrl) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty() || userOpt.get().getDeletedAt() != null) {
-            LogUtil.warn("Password reset requested for non-existing or disabled email.");
-            return;
+            LogUtil.warn("Password reset requested for non-existing or disabled email: " + email);
+            throw new RuntimeException("Email không tồn tại trong hệ thống hoặc đã bị khóa!");
         }
 
         User user = userOpt.get();
+
+        // Nếu request gửi từ Admin Portal, bắt buộc user phải là admin hoặc staff
+        if (resetBaseUrl != null && resetBaseUrl.contains("5174")) {
+            if (!"admin".equalsIgnoreCase(user.getRole()) && !"staff".equalsIgnoreCase(user.getRole())) {
+                throw new RuntimeException("Tài khoản không hợp lệ!");
+            }
+        }
+
         String resetToken = jwtUtil.generateResetToken(user);
         user.setResetTokenHash(HashUtil.hashSHA256(resetToken));
         user.setResetTokenExpiresAt(Timestamp.from(Instant.ofEpochMilli(jwtUtil.extractExpiration(resetToken).getTime())));
         userRepository.save(user);
 
-        emailService.sendResetPasswordMail(user.getEmail(), user.getUsername(), resetToken);
+        emailService.sendResetPasswordMail(user.getEmail(), user.getUsername(), resetToken, resetBaseUrl);
         LogUtil.info("Password reset email queued for user id " + user.getId());
     }
 

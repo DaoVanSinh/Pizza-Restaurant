@@ -81,11 +81,13 @@ public class AuthController implements AuthApi {
                                                                HttpServletRequest httpRequest) {
         try {
             rateLimitService.check("forgot-password", clientKey(httpRequest, request.getEmail()), 3, Duration.ofMinutes(15));
-            authService.processForgotPassword(request.getEmail(), emailService);
+            // Use Origin header to determine which frontend the reset link should point to
+            String origin = httpRequest.getHeader("Origin");
+            authService.processForgotPassword(request.getEmail(), emailService, origin);
+            return ResponseEntity.ok(BaseResponse.success(null, "Link khôi phục mật khẩu đã được gửi đến email."));
         } catch (RuntimeException e) {
-            // Keep the response indistinguishable to avoid account enumeration.
+            return ResponseEntity.status(400).body(BaseResponse.error(400, e.getMessage()));
         }
-        return ResponseEntity.ok(BaseResponse.success(null, "Neu email ton tai, link khoi phuc mat khau se duoc gui den email do."));
     }
 
     @Override

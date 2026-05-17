@@ -38,7 +38,7 @@ public class JwtAuthFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        applySecurityHeaders(httpResponse);
+        applySecurityHeaders(httpRequest, httpResponse);
         applyCorsHeaders(httpRequest, httpResponse);
 
         if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
@@ -152,12 +152,19 @@ public class JwtAuthFilter implements Filter {
                 .anyMatch(origin::equals);
     }
 
-    private void applySecurityHeaders(HttpServletResponse response) {
+    private void applySecurityHeaders(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("X-Content-Type-Options", "nosniff");
         response.setHeader("X-Frame-Options", "DENY");
         response.setHeader("Referrer-Policy", "no-referrer");
         response.setHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
-        response.setHeader("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
+
+        // Image endpoints need a relaxed CSP so browsers can render them
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/v1/images/")) {
+            response.setHeader("Content-Security-Policy", "default-src 'none'; img-src 'self'");
+        } else {
+            response.setHeader("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
+        }
     }
 
     private void writeError(HttpServletResponse response, int status, String message) throws IOException {

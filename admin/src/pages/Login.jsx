@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { authApi } from "../services/modules/auth.api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { UtensilsCrossed, LogIn } from "lucide-react";
+import { UtensilsCrossed, LogIn, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -81,15 +82,34 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Vui lòng nhập mật khẩu"
-                className="h-11"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Mật khẩu</Label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary hover:underline font-medium"
+                >
+                  Quên mật khẩu?
+                </Link>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Vui lòng nhập mật khẩu"
+                  className="h-11 pr-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
             <Button
